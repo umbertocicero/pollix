@@ -78,6 +78,10 @@ export default function PollVotePage() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  
+  // Validation errors
+  const [nameError, setNameError] = useState(false);
+  const [selectionError, setSelectionError] = useState(false);
 
   const pollUrl = typeof window !== 'undefined' 
     ? `${window.location.origin}/polls/${pollId}` 
@@ -144,12 +148,22 @@ export default function PollVotePage() {
   const handleVote = async () => {
     if (!poll) return;
     
+    // Reset errors
+    setNameError(false);
+    setSelectionError(false);
+    
+    let hasErrors = false;
+    
     if (poll.require_name && !voterName.trim()) {
-      toast.error(t('poll.vote.namePlaceholder'));
-      return;
+      setNameError(true);
+      hasErrors = true;
     }
     if (selectedOptions.length === 0) {
-      toast.error(t('poll.vote.selectOption'));
+      setSelectionError(true);
+      hasErrors = true;
+    }
+    
+    if (hasErrors) {
       return;
     }
 
@@ -266,47 +280,49 @@ export default function PollVotePage() {
             <CardContent className="space-y-6">
               {/* Voter Name */}
               {poll.require_name && !hasVoted && (
-                <div>
-                  <Label htmlFor="voterName">{t('poll.vote.yourName')}</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="voterName" className="flex items-center gap-1 text-base font-semibold">
+                    {t('poll.vote.yourName')}
+                    <span className="text-red-500">*</span>
+                  </Label>
                   <Input
                     id="voterName"
                     value={voterName}
-                    onChange={(e) => setVoterName(e.target.value)}
+                    onChange={(e) => {
+                      setVoterName(e.target.value);
+                      if (e.target.value.trim()) setNameError(false);
+                    }}
                     placeholder={t('poll.vote.namePlaceholder')}
-                    className="mt-1.5"
+                    className={cn(
+                      'mt-1.5 text-base',
+                      nameError && 'border-2 border-red-500 bg-red-500/10 focus-visible:ring-red-500'
+                    )}
                   />
+                  {nameError && (
+                    <div className="flex items-center gap-2 rounded-md bg-red-500/20 p-3 text-red-400">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                      </svg>
+                      <span className="font-medium">{t('poll.vote.nameRequired') || 'Per favore inserisci il tuo nome'}</span>
+                    </div>
+                  )}
+                </div>
+              )}
+              
+              {/* Selection Error */}
+              {selectionError && !hasVoted && (
+                <div className="flex items-center gap-2 rounded-md bg-red-500/20 p-3 text-red-400">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                  </svg>
+                  <span className="font-medium">{t('poll.vote.selectionRequired') || 'Per favore seleziona almeno un\'opzione'}</span>
                 </div>
               )}
 
               {/* Voting Options (show when not voted) */}
               {!hasVoted && (
                 <div className="space-y-3">
-                  {poll.poll_type === 'single_choice' ? (
-                    <RadioGroup
-                      value={selectedOptions[0]}
-                      onValueChange={(value) => setSelectedOptions([value])}
-                    >
-                      {options.map((option) => {
-                        const result = results.find((r) => r.optionId === option.id);
-                        return (
-                          <div
-                            key={option.id}
-                            className={cn(
-                              'flex items-center justify-between rounded-lg border p-4 transition-colors hover:bg-muted/50',
-                              selectedOptions.includes(option.id) && 'border-primary bg-primary/5'
-                            )}
-                          >
-                            <div className="flex items-center space-x-3">
-                              <RadioGroupItem value={option.id} id={option.id} />
-                              <Label
-                                htmlFor={option.id}
-                                className="flex-1 cursor-pointer"
-                              >
-                                {getOptionText(option)}
-                              </Label>
-                            </div>
-                            {poll.show_results_before_vote && (
-                              <span className="text-sm text-muted-foreground">
+                  <Label className="flex items-center gap-1 text-base font-semibold\">\n                    {poll.poll_type === 'single_choice' \n                      ? (t('poll.vote.selectOption') || 'Seleziona un\\'opzione')\n                      : (t('poll.vote.selectOptions') || 'Seleziona le opzioni')}\n                    <span className=\"text-red-500\">*</span>\n                  </Label>\n                  \n                  {poll.poll_type === 'single_choice' ? (\n                    <RadioGroup\n                      value={selectedOptions[0]}\n                      onValueChange={(value) => {\n                        setSelectedOptions([value]);\n                        setSelectionError(false);\n                      }}\n                      className={cn(selectionError && 'rounded-lg ring-2 ring-red-500 ring-offset-2 ring-offset-background')}\n                    >\n                      {options.map((option) => {\n                        const result = results.find((r) => r.optionId === option.id);\n                        return (\n                          <div\n                            key={option.id}\n                            className={cn(\n                              'flex items-center justify-between rounded-lg border-2 p-4 transition-all hover:bg-muted/50 cursor-pointer',\n                              selectedOptions.includes(option.id) \n                                ? 'border-primary bg-primary/10 shadow-md' \n                                : 'border-muted-foreground/20'\n                            )}\n                          >\n                            <div className=\"flex items-center space-x-3\">\n                              <RadioGroupItem value={option.id} id={option.id} />\n                              <Label\n                                htmlFor={option.id}\n                                className=\"flex-1 cursor-pointer text-base\"\n                              >\n                                {getOptionText(option)}\n                              </Label>\n                            </div>\n                            {poll.show_results_before_vote && (\n                              <span className=\"text-sm text-muted-foreground\">
                                 {result?.voteCount || 0} ({result?.percentage || 0}%)
                               </span>
                             )}
