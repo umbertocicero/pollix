@@ -73,7 +73,8 @@ interface PollOption {
 }
 
 export default function EditPollPage() {
-  const t = useTranslations('poll.create');\n  const tErrors = useTranslations('errors');
+  const t = useTranslations('poll.create');
+  const tErrors = useTranslations('errors');
   const router = useRouter();
   const params = useParams();
   const pollId = params.id as string;
@@ -205,60 +206,104 @@ export default function EditPollPage() {
         throw new Error(pollError.message);
       }
 
-      // Update options
+      // Update options - preserve existing option IDs to keep votes
       const isCalendar = poll.poll_type === 'calendar';
 
       if (isCalendar) {
-        // Delete existing options
-        await supabase
-          .from('poll_options')
-          .delete()
-          .eq('poll_id', poll.id);
+        const newOptions = (data.dateOptions || [])
+          .filter(opt => opt.date && opt.date.length > 0);
 
-        // Insert new options
-        const optionsToInsert = (data.dateOptions || [])
-          .filter(opt => opt.date && opt.date.length > 0)
-          .map((opt, index) => ({
-            poll_id: poll.id,
-            text: null,
-            date: opt.date || null,
-            start_time: opt.startTime || null,
-            end_time: opt.endTime || null,
-            sort_order: index,
-          }));
+        // Get IDs of options that still exist in the form
+        const existingIds = newOptions
+          .filter(opt => opt.id)
+          .map(opt => opt.id);
 
-        if (optionsToInsert.length > 0) {
-          const { error: optionsError } = await supabase
+        // Delete only options that were removed from the form
+        const idsToDelete = originalOptions
+          .filter(orig => !existingIds.includes(orig.id))
+          .map(orig => orig.id);
+
+        if (idsToDelete.length > 0) {
+          await supabase
             .from('poll_options')
-            .insert(optionsToInsert);
+            .delete()
+            .in('id', idsToDelete);
+        }
 
-          if (optionsError) throw new Error(optionsError.message);
+        // Update existing options and insert new ones
+        for (let index = 0; index < newOptions.length; index++) {
+          const opt = newOptions[index];
+          if (opt.id) {
+            // Update existing option
+            await supabase
+              .from('poll_options')
+              .update({
+                date: opt.date || null,
+                start_time: opt.startTime || null,
+                end_time: opt.endTime || null,
+                sort_order: index,
+              })
+              .eq('id', opt.id);
+          } else {
+            // Insert new option
+            await supabase
+              .from('poll_options')
+              .insert({
+                poll_id: poll.id,
+                text: null,
+                date: opt.date || null,
+                start_time: opt.startTime || null,
+                end_time: opt.endTime || null,
+                sort_order: index,
+              });
+          }
         }
       } else {
-        // Delete existing options
-        await supabase
-          .from('poll_options')
-          .delete()
-          .eq('poll_id', poll.id);
+        const newOptions = (data.options || [])
+          .filter(opt => opt.text && opt.text.trim().length > 0);
 
-        // Insert new options
-        const optionsToInsert = (data.options || [])
-          .filter(opt => opt.text && opt.text.trim().length > 0)
-          .map((opt, index) => ({
-            poll_id: poll.id,
-            text: opt.text,
-            date: null,
-            start_time: null,
-            end_time: null,
-            sort_order: index,
-          }));
+        // Get IDs of options that still exist in the form
+        const existingIds = newOptions
+          .filter(opt => opt.id)
+          .map(opt => opt.id);
 
-        if (optionsToInsert.length > 0) {
-          const { error: optionsError } = await supabase
+        // Delete only options that were removed from the form
+        const idsToDelete = originalOptions
+          .filter(orig => !existingIds.includes(orig.id))
+          .map(orig => orig.id);
+
+        if (idsToDelete.length > 0) {
+          await supabase
             .from('poll_options')
-            .insert(optionsToInsert);
+            .delete()
+            .in('id', idsToDelete);
+        }
 
-          if (optionsError) throw new Error(optionsError.message);
+        // Update existing options and insert new ones
+        for (let index = 0; index < newOptions.length; index++) {
+          const opt = newOptions[index];
+          if (opt.id) {
+            // Update existing option
+            await supabase
+              .from('poll_options')
+              .update({
+                text: opt.text,
+                sort_order: index,
+              })
+              .eq('id', opt.id);
+          } else {
+            // Insert new option
+            await supabase
+              .from('poll_options')
+              .insert({
+                poll_id: poll.id,
+                text: opt.text,
+                date: null,
+                start_time: null,
+                end_time: null,
+                sort_order: index,
+              });
+          }
         }
       }
 
