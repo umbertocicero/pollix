@@ -53,12 +53,12 @@ const createPollSchema = z.object({
   pollType: z.enum(['single_choice', 'multiple_choice', 'calendar']),
   options: z.array(
     z.object({
-      text: z.string().min(1, 'Option text is required'),
+      text: z.string(),
     })
   ).optional(),
   dateOptions: z.array(
     z.object({
-      date: z.string().min(1, 'Date is required'),
+      date: z.string().optional(),
       startTime: z.string().optional(),
       endTime: z.string().optional(),
     })
@@ -69,9 +69,13 @@ const createPollSchema = z.object({
 }).refine(
   (data) => {
     if (data.pollType === 'calendar') {
-      return data.dateOptions && data.dateOptions.length >= 2;
+      // For calendar: need at least 2 date options with valid dates
+      const validDates = data.dateOptions?.filter(opt => opt.date && opt.date.length > 0) || [];
+      return validDates.length >= 2;
     }
-    return data.options && data.options.length >= 2;
+    // For single/multiple choice: need at least 2 options with text
+    const validOptions = data.options?.filter(opt => opt.text && opt.text.trim().length > 0) || [];
+    return validOptions.length >= 2;
   },
   { message: 'At least 2 options required', path: ['options'] }
 );
@@ -141,20 +145,24 @@ export default function CreatePollPage() {
         throw new Error(pollError.message);
       }
 
-      // Create poll options
+      // Create poll options (filter out empty ones)
       const options = data.pollType === 'calendar'
-        ? (data.dateOptions || []).map((opt, index) => ({
-            poll_id: poll.id,
-            date: opt.date || null,
-            start_time: opt.startTime || null,
-            end_time: opt.endTime || null,
-            sort_order: index,
-          }))
-        : (data.options || []).map((opt, index) => ({
-            poll_id: poll.id,
-            text: opt.text,
-            sort_order: index,
-          }));
+        ? (data.dateOptions || [])
+            .filter(opt => opt.date && opt.date.length > 0)
+            .map((opt, index) => ({
+              poll_id: poll.id,
+              date: opt.date || null,
+              start_time: opt.startTime || null,
+              end_time: opt.endTime || null,
+              sort_order: index,
+            }))
+        : (data.options || [])
+            .filter(opt => opt.text && opt.text.trim().length > 0)
+            .map((opt, index) => ({
+              poll_id: poll.id,
+              text: opt.text,
+              sort_order: index,
+            }));
 
       const { error: optionsError } = await supabase
         .from('poll_options')
