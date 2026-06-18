@@ -53,7 +53,7 @@
 
 ## 🎬 Live
 
-> 🚧 Online disponibile su: `https://planora-web-jet.vercel.app/`
+> 🌍 Online disponibile su: [planora-jet.vercel.app](https://planora-jet.vercel.app/)
 
 ### Screenshot
 
