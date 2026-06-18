@@ -90,7 +90,7 @@ export function Footer() {
           <p className="flex items-center justify-center gap-1">
             Coded with <Heart className="h-4 w-4 fill-red-500 text-red-500" /> by Umberto Antonio Cicero
           </p>
-          <p className="mt-2">&copy; {new Date().getFullYear()} Umberto Antonio Cicero. All rights reserved.</p>
+          {/* <p className="mt-2">&copy; {new Date().getFullYear()} Umberto Antonio Cicero. All rights reserved.</p> */}
         </div>
       </div>
     </footer>

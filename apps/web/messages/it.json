@@ -76,6 +76,7 @@
       "specifyTimes": "Specifica orari",
       "specifyTimesDescription": "Includi gli orari d'inizio e di fine per ogni opzione",
       "selectedDates": "Date selezionate",
+      "noDatesSelected": "Clicca sul calendario per selezionare le date",
       "timeSlots": "Fasce orarie",
       "minDatesRequired": "Seleziona almeno {count} date",
       "settings": "Impostazioni",

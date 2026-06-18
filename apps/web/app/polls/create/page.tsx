@@ -71,9 +71,8 @@ const createPollSchema = z.object({
 }).refine(
   (data) => {
     if (data.pollType === 'calendar') {
-      // For calendar: need at least 2 date options with valid dates
-      const validDates = data.dateOptions?.filter(opt => opt.date && opt.date.length > 0) || [];
-      return validDates.length >= 2;
+      // For calendar: any number of dates is fine (0 or more)
+      return true;
     }
     // For single/multiple choice: need at least 2 options with text
     const validOptions = data.options?.filter(opt => opt.text && opt.text.trim().length > 0) || [];
@@ -338,7 +337,6 @@ export default function CreatePollPage() {
                         <PollDatePicker
                           value={(field.value || []).filter((opt): opt is { date: string; startTime?: string; endTime?: string } => !!opt.date)}
                           onChange={field.onChange}
-                          minDates={2}
                         />
                       )}
                     />

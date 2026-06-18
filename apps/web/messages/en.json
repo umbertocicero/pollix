@@ -76,6 +76,7 @@
       "specifyTimes": "Specify times",
       "specifyTimesDescription": "Include start and end times for each option",
       "selectedDates": "Selected dates",
+      "noDatesSelected": "Click on the calendar to select dates",
       "timeSlots": "Time slots",
       "minDatesRequired": "Select at least {count} dates",
       "settings": "Settings",
