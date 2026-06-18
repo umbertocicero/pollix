@@ -30,7 +30,7 @@
   "home": {
     "hero": {
       "title": "Simple polls for better decisions",
-      "subtitle": "Create polls, schedule meetings, and collect availability in minutes. No registration required.",
+      "subtitle": "Create polls and schedule meetings in minutes. Participants can vote without registration.",
       "cta": "Create a Poll",
       "ctaSecondary": "View Features"
     },

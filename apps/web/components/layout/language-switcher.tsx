@@ -1,6 +1,7 @@
 'use client';
 
 import { useTransition } from 'react';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -11,8 +12,8 @@ import {
 import { Languages } from 'lucide-react';
 
 const languages = [
-  { code: 'en', label: 'English', flag: '🇬🇧' },
-  { code: 'it', label: 'Italiano', flag: '🇮🇹' },
+  { code: 'en', label: 'English', flag: '/flags/en.svg' },
+  { code: 'it', label: 'Italiano', flag: '/flags/it.svg' },
 ];
 
 export function LanguageSwitcher() {
@@ -39,7 +40,13 @@ export function LanguageSwitcher() {
             key={lang.code}
             onClick={() => switchLocale(lang.code)}
           >
-            <span className="mr-2">{lang.flag}</span>
+            <Image
+              src={lang.flag}
+              alt={lang.label}
+              width={18}
+              height={12}
+              className="mr-2 rounded-[2px] border"
+            />
             {lang.label}
           </DropdownMenuItem>
         ))}

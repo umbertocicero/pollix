@@ -11,7 +11,7 @@ const inter = Inter({ subsets: ['latin'] });
 export const metadata: Metadata = {
   title: 'Planora - Simple polls for better decisions',
   description:
-    'Create polls, schedule meetings, and collect availability in minutes. No registration required.',
+    'Create polls and schedule meetings in minutes. Participants can vote without registration.',
   keywords: ['polls', 'scheduling', 'meetings', 'voting', 'availability'],
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://planora-jet.vercel.app'),
   icons: {
