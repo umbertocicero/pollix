@@ -146,27 +146,43 @@ export default function CreatePollPage() {
       }
 
       // Create poll options (filter out empty ones)
-      const options = data.pollType === 'calendar'
-        ? (data.dateOptions || [])
-            .filter(opt => opt.date && opt.date.length > 0)
-            .map((opt, index) => ({
-              poll_id: poll.id,
-              date: opt.date || null,
-              start_time: opt.startTime || null,
-              end_time: opt.endTime || null,
-              sort_order: index,
-            }))
-        : (data.options || [])
-            .filter(opt => opt.text && opt.text.trim().length > 0)
-            .map((opt, index) => ({
-              poll_id: poll.id,
-              text: opt.text,
-              sort_order: index,
-            }));
+      // Both branches need same shape for TypeScript
+      let optionsToInsert: {
+        poll_id: string;
+        text: string | null;
+        date: string | null;
+        start_time: string | null;
+        end_time: string | null;
+        sort_order: number;
+      }[];
+
+      if (data.pollType === 'calendar') {
+        optionsToInsert = (data.dateOptions || [])
+          .filter(opt => opt.date && opt.date.length > 0)
+          .map((opt, index) => ({
+            poll_id: poll.id,
+            text: null,
+            date: opt.date || null,
+            start_time: opt.startTime || null,
+            end_time: opt.endTime || null,
+            sort_order: index,
+          }));
+      } else {
+        optionsToInsert = (data.options || [])
+          .filter(opt => opt.text && opt.text.trim().length > 0)
+          .map((opt, index) => ({
+            poll_id: poll.id,
+            text: opt.text,
+            date: null,
+            start_time: null,
+            end_time: null,
+            sort_order: index,
+          }));
+      }
 
       const { error: optionsError } = await supabase
         .from('poll_options')
-        .insert(options);
+        .insert(optionsToInsert);
 
       if (optionsError) {
         console.error('Error creating options:', optionsError);
