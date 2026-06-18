@@ -115,7 +115,7 @@ export function PollDatePicker({ value, onChange, minDates = 2 }: PollDatePicker
               <Button
                 type="button"
                 variant="outline"
-                className="w-full"
+                className="w-full border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white"
                 onClick={handleToday}
               >
                 {t('today')}
@@ -154,17 +154,17 @@ export function PollDatePicker({ value, onChange, minDates = 2 }: PollDatePicker
                   return (
                     <div
                       key={opt.date}
-                      className="flex items-center gap-1 rounded-lg border bg-muted/50 px-3 py-2"
+                      className="flex items-center gap-1 rounded-lg border-2 border-primary bg-primary/10 px-3 py-2"
                     >
                       <div className="text-center">
-                        <div className="text-xs text-muted-foreground">{month}</div>
-                        <div className="text-lg font-semibold">{day}</div>
+                        <div className="text-xs text-primary/70">{month}</div>
+                        <div className="text-lg font-semibold text-primary">{day}</div>
                       </div>
                       <Button
                         type="button"
                         variant="ghost"
                         size="icon"
-                        className="h-6 w-6 ml-1"
+                        className="h-6 w-6 ml-1 hover:bg-primary/20"
                         onClick={() => handleRemoveDate(opt.date)}
                       >
                         <X className="h-3 w-3" />
