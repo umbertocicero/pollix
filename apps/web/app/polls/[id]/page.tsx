@@ -1,7 +1,7 @@
 'use client'; 
 
 import { useEffect, useState, useCallback } from 'react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { useParams, useRouter } from 'next/navigation';
 import { QRCodeSVG } from 'qrcode.react';
 import { toast } from 'sonner';
@@ -98,6 +98,7 @@ function saveVoterName(name: string): void {
 
 export default function PollVotePage() {
   const t = useTranslations();
+  const locale = useLocale();
   const params = useParams();
   const router = useRouter();
   const pollId = params.id as string;
@@ -476,7 +477,11 @@ export default function PollVotePage() {
   const getOptionText = (option: PollOption) => {
     if (option.text) return option.text;
     if (option.date) {
-      let text = new Date(option.date).toLocaleDateString();
+      let text = new Date(option.date).toLocaleDateString(locale, {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+      });
       if (option.start_time) text += ` ${option.start_time}`;
       if (option.end_time) text += ` - ${option.end_time}`;
       return text;

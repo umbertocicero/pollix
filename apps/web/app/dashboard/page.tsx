@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import Link from 'next/link';
 import { Plus, BarChart3, Users, FileText, Loader2, MoreVertical, Trash2, XCircle, CheckCircle, Vote } from 'lucide-react';
 import { toast } from 'sonner';
@@ -51,6 +51,7 @@ interface PollWithVotes extends Poll {
 
 export default function DashboardPage() {
   const t = useTranslations('dashboard');
+  const locale = useLocale();
   const [myPolls, setMyPolls] = useState<PollWithVotes[]>([]);
   const [votedPolls, setVotedPolls] = useState<PollWithVotes[]>([]);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -213,7 +214,11 @@ export default function DashboardPage() {
   }, [fetchDashboardData]);
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString();
+    return new Date(dateString).toLocaleDateString(locale, {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    });
   };
 
   if (loading) {
