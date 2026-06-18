@@ -336,7 +336,7 @@ export default function CreatePollPage() {
                       name="dateOptions"
                       render={({ field }) => (
                         <PollDatePicker
-                          value={field.value || []}
+                          value={(field.value || []).filter((opt): opt is { date: string; startTime?: string; endTime?: string } => !!opt.date)}
                           onChange={field.onChange}
                           minDates={2}
                         />
