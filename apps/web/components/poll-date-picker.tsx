@@ -1,17 +1,15 @@
 'use client';
 
 import * as React from 'react';
-import { format, isSameDay } from 'date-fns';
+import { format } from 'date-fns';
 import { it, enUS } from 'date-fns/locale';
-import { X, Calendar as CalendarIcon, Clock } from 'lucide-react';
+import { X, Clock } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 
 import { Calendar } from '@/components/ui/calendar';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
-import { cn } from '@/lib/utils';
 
 interface DateOption {
   date: string;
@@ -125,21 +123,25 @@ export function PollDatePicker({ value, onChange, minDates = 2 }: PollDatePicker
         </div>
 
         {/* Selected dates & options */}
-        <div className="flex-1 space-y-4">
+        <div className="flex-1 space-y-4 min-w-0">
           {/* Time toggle */}
-          <div className="flex items-center justify-between rounded-lg border p-4">
-            <div>
-              <Label className="font-medium">{t('specifyTimes')}</Label>
-              <p className="text-sm text-muted-foreground">
-                {t('specifyTimesDescription')}
-              </p>
-            </div>
+          <label 
+            htmlFor="specify-times"
+            className="flex items-center gap-3 rounded-lg border p-4 cursor-pointer hover:bg-muted/50 transition-colors"
+          >
             <Checkbox
               id="specify-times"
               checked={showTimes}
               onCheckedChange={(checked) => setShowTimes(checked === true)}
+              className="h-5 w-5"
             />
-          </div>
+            <div className="flex-1">
+              <span className="font-medium">{t('specifyTimes')}</span>
+              <p className="text-sm text-muted-foreground">
+                {t('specifyTimesDescription')}
+              </p>
+            </div>
+          </label>
 
           {/* Selected dates */}
           {value.length > 0 && (
@@ -148,23 +150,23 @@ export function PollDatePicker({ value, onChange, minDates = 2 }: PollDatePicker
                 {t('selectedDates')} ({value.length})
               </Label>
               
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-3">
                 {value.filter(opt => opt.date).map((opt) => {
                   const { month, day } = formatDateChip(opt.date);
                   return (
                     <div
                       key={opt.date}
-                      className="flex items-center gap-1 rounded-lg border-2 border-primary bg-primary/10 px-3 py-2"
+                      className="flex items-center gap-2 rounded-lg border-2 border-primary bg-primary/10 px-3 py-2"
                     >
-                      <div className="text-center">
+                      <div className="text-center min-w-[2rem]">
                         <div className="text-xs text-primary/70">{month}</div>
-                        <div className="text-lg font-semibold text-primary">{day}</div>
+                        <div className="text-lg font-semibold text-primary leading-tight">{day}</div>
                       </div>
                       <Button
                         type="button"
                         variant="ghost"
                         size="icon"
-                        className="h-6 w-6 ml-1 hover:bg-primary/20"
+                        className="h-5 w-5 hover:bg-primary/20"
                         onClick={() => handleRemoveDate(opt.date)}
                       >
                         <X className="h-3 w-3" />
@@ -183,33 +185,83 @@ export function PollDatePicker({ value, onChange, minDates = 2 }: PollDatePicker
                 <Clock className="h-4 w-4" />
                 {t('timeSlots')}
               </Label>
-              {value.filter(opt => opt.date).map((opt) => {
-                const date = new Date(opt.date);
-                return (
-                  <div key={opt.date} className="flex items-center gap-3">
-                    <div className="w-24 text-sm font-medium">
-                      {format(date, 'd MMM', { locale: dateLocale })}
+              <div className="space-y-2">
+                {value.filter(opt => opt.date).map((opt) => {
+                  const date = new Date(opt.date);
+                  return (
+                    <div key={opt.date} className="flex items-center gap-2">
+                      <div className="w-16 text-sm font-medium shrink-0">
+                        {format(date, 'd MMM', { locale: dateLocale })}
+                      </div>
+                      <div className="flex items-center gap-1 flex-1 min-w-0">
+                        <select
+                          value={opt.startTime?.split(':')[0] || ''}
+                          onChange={(e) => {
+                            const hour = e.target.value;
+                            const minutes = opt.startTime?.split(':')[1] || '00';
+                            handleTimeChange(opt.date, 'startTime', hour ? `${hour}:${minutes}` : '');
+                          }}
+                          className="w-14 h-9 rounded-md border border-input bg-background px-2 text-sm"
+                        >
+                          <option value="">--</option>
+                          {Array.from({ length: 24 }, (_, i) => (
+                            <option key={i} value={i.toString().padStart(2, '0')}>
+                              {i.toString().padStart(2, '0')}
+                            </option>
+                          ))}
+                        </select>
+                        <span className="text-muted-foreground">:</span>
+                        <select
+                          value={opt.startTime?.split(':')[1] || ''}
+                          onChange={(e) => {
+                            const hour = opt.startTime?.split(':')[0] || '00';
+                            const minutes = e.target.value;
+                            handleTimeChange(opt.date, 'startTime', minutes ? `${hour}:${minutes}` : '');
+                          }}
+                          className="w-14 h-9 rounded-md border border-input bg-background px-2 text-sm"
+                        >
+                          <option value="">--</option>
+                          {['00', '15', '30', '45'].map(m => (
+                            <option key={m} value={m}>{m}</option>
+                          ))}
+                        </select>
+                        <span className="text-muted-foreground mx-1">-</span>
+                        <select
+                          value={opt.endTime?.split(':')[0] || ''}
+                          onChange={(e) => {
+                            const hour = e.target.value;
+                            const minutes = opt.endTime?.split(':')[1] || '00';
+                            handleTimeChange(opt.date, 'endTime', hour ? `${hour}:${minutes}` : '');
+                          }}
+                          className="w-14 h-9 rounded-md border border-input bg-background px-2 text-sm"
+                        >
+                          <option value="">--</option>
+                          {Array.from({ length: 24 }, (_, i) => (
+                            <option key={i} value={i.toString().padStart(2, '0')}>
+                              {i.toString().padStart(2, '0')}
+                            </option>
+                          ))}
+                        </select>
+                        <span className="text-muted-foreground">:</span>
+                        <select
+                          value={opt.endTime?.split(':')[1] || ''}
+                          onChange={(e) => {
+                            const hour = opt.endTime?.split(':')[0] || '00';
+                            const minutes = e.target.value;
+                            handleTimeChange(opt.date, 'endTime', minutes ? `${hour}:${minutes}` : '');
+                          }}
+                          className="w-14 h-9 rounded-md border border-input bg-background px-2 text-sm"
+                        >
+                          <option value="">--</option>
+                          {['00', '15', '30', '45'].map(m => (
+                            <option key={m} value={m}>{m}</option>
+                          ))}
+                        </select>
+                      </div>
                     </div>
-                    <div className="flex flex-1 items-center gap-2">
-                      <Input
-                        type="time"
-                        value={opt.startTime || ''}
-                        onChange={(e) => handleTimeChange(opt.date, 'startTime', e.target.value)}
-                        className="flex-1"
-                        placeholder="09:00"
-                      />
-                      <span className="text-muted-foreground">-</span>
-                      <Input
-                        type="time"
-                        value={opt.endTime || ''}
-                        onChange={(e) => handleTimeChange(opt.date, 'endTime', e.target.value)}
-                        className="flex-1"
-                        placeholder="17:00"
-                      />
-                    </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
           )}
 

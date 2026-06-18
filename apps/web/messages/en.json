@@ -214,8 +214,7 @@
     },
     "social": {
       "continueWith": "Continue with {provider}",
-      "google": "Google",
-      "apple": "Apple"
+      "google": "Google"
     }
   },
   "errors": {

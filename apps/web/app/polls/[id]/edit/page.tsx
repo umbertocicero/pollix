@@ -1,13 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { useRouter, useParams } from 'next/navigation';
 import { useForm, useFieldArray, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Plus, Trash2, Calendar, Clock, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { format } from 'date-fns';
 import type { User } from '@supabase/supabase-js';
 
 import { createClient } from '@/lib/supabase/client';
@@ -75,6 +76,7 @@ interface PollOption {
 export default function EditPollPage() {
   const t = useTranslations('poll.create');
   const tErrors = useTranslations('errors');
+  const locale = useLocale();
   const router = useRouter();
   const params = useParams();
   const pollId = params.id as string;
@@ -84,6 +86,7 @@ export default function EditPollPage() {
   const [user, setUser] = useState<User | null>(null);
   const [poll, setPoll] = useState<Poll | null>(null);
   const [originalOptions, setOriginalOptions] = useState<PollOption[]>([]);
+  const [hasTimeOptions, setHasTimeOptions] = useState(false);
 
   const {
     register,
@@ -154,6 +157,10 @@ export default function EditPollPage() {
         .order('sort_order');
 
       setOriginalOptions(optionsData || []);
+
+      // Check if poll was created with time options
+      const hasTime = (optionsData || []).some(opt => opt.start_time || opt.end_time);
+      setHasTimeOptions(hasTime);
 
       // Set form values
       const isCalendar = pollData.poll_type === 'calendar';
@@ -391,53 +398,179 @@ export default function EditPollPage() {
                 {isCalendar ? (
                   <>
                     {dateFields.map((field, index) => (
-                      <div key={field.id} className="flex flex-col gap-2 rounded-lg border p-4 sm:flex-row sm:items-end">
-                        <div className="flex-1">
-                          <Label className="text-sm text-muted-foreground">
-                            <Calendar className="mr-1 inline h-3 w-3" />
-                            {t('date')}
-                          </Label>
-                          <Input
-                            type="date"
-                            {...register(`dateOptions.${index}.date`)}
-                            className="mt-1"
-                          />
+                        <div key={field.id} className="flex flex-col gap-2 rounded-lg border p-4 sm:flex-row sm:items-end">
+                          <div className="flex-1">
+                            <Label className="text-sm text-muted-foreground">
+                              <Calendar className="mr-1 inline h-3 w-3" />
+                              {t('date')}
+                            </Label>
+                            <Controller
+                              control={control}
+                              name={`dateOptions.${index}.date`}
+                              render={({ field: dateField }) => (
+                                <div className="mt-1 flex gap-1">
+                                  <select
+                                    value={dateField.value ? new Date(dateField.value).getDate().toString() : ''}
+                                    onChange={(e) => {
+                                      const day = parseInt(e.target.value);
+                                      const current = dateField.value ? new Date(dateField.value) : new Date();
+                                      current.setDate(day);
+                                      dateField.onChange(format(current, 'yyyy-MM-dd'));
+                                    }}
+                                    className="w-16 h-9 rounded-md border border-input bg-background px-2 text-sm"
+                                  >
+                                    <option value="">{locale === 'it' ? 'GG' : 'DD'}</option>
+                                    {Array.from({ length: 31 }, (_, i) => (
+                                      <option key={i + 1} value={i + 1}>
+                                        {(i + 1).toString().padStart(2, '0')}
+                                      </option>
+                                    ))}
+                                  </select>
+                                  <select
+                                    value={dateField.value ? (new Date(dateField.value).getMonth() + 1).toString() : ''}
+                                    onChange={(e) => {
+                                      const month = parseInt(e.target.value) - 1;
+                                      const current = dateField.value ? new Date(dateField.value) : new Date();
+                                      current.setMonth(month);
+                                      dateField.onChange(format(current, 'yyyy-MM-dd'));
+                                    }}
+                                    className="w-16 h-9 rounded-md border border-input bg-background px-2 text-sm"
+                                  >
+                                    <option value="">{locale === 'it' ? 'MM' : 'MM'}</option>
+                                    {Array.from({ length: 12 }, (_, i) => (
+                                      <option key={i + 1} value={i + 1}>
+                                        {(i + 1).toString().padStart(2, '0')}
+                                      </option>
+                                    ))}
+                                  </select>
+                                  <select
+                                    value={dateField.value ? new Date(dateField.value).getFullYear().toString() : ''}
+                                    onChange={(e) => {
+                                      const year = parseInt(e.target.value);
+                                      const current = dateField.value ? new Date(dateField.value) : new Date();
+                                      current.setFullYear(year);
+                                      dateField.onChange(format(current, 'yyyy-MM-dd'));
+                                    }}
+                                    className="w-20 h-9 rounded-md border border-input bg-background px-2 text-sm"
+                                  >
+                                    <option value="">{locale === 'it' ? 'AAAA' : 'YYYY'}</option>
+                                    {Array.from({ length: 5 }, (_, i) => (
+                                      <option key={2026 + i} value={2026 + i}>
+                                        {2026 + i}
+                                      </option>
+                                    ))}
+                                  </select>
+                                </div>
+                              )}
+                            />
+                          </div>
+                          {hasTimeOptions && (
+                            <>
+                              <div className="flex-1">
+                                <Label className="text-sm text-muted-foreground">
+                                  <Clock className="mr-1 inline h-3 w-3" />
+                                  {t('startTime')}
+                                </Label>
+                                <Controller
+                                  control={control}
+                                  name={`dateOptions.${index}.startTime`}
+                                  render={({ field: timeField }) => (
+                                    <div className="mt-1 flex gap-1 items-center">
+                                      <select
+                                        value={timeField.value?.split(':')[0] || ''}
+                                        onChange={(e) => {
+                                          const hour = e.target.value;
+                                          const minutes = timeField.value?.split(':')[1] || '00';
+                                          timeField.onChange(hour ? `${hour}:${minutes}` : '');
+                                        }}
+                                        className="w-16 h-9 rounded-md border border-input bg-background px-2 text-sm"
+                                      >
+                                        <option value="">--</option>
+                                        {Array.from({ length: 24 }, (_, i) => (
+                                          <option key={i} value={i.toString().padStart(2, '0')}>
+                                            {i.toString().padStart(2, '0')}
+                                          </option>
+                                        ))}
+                                      </select>
+                                      <span className="text-muted-foreground">:</span>
+                                      <select
+                                        value={timeField.value?.split(':')[1] || ''}
+                                        onChange={(e) => {
+                                          const hour = timeField.value?.split(':')[0] || '00';
+                                          const minutes = e.target.value;
+                                          timeField.onChange(minutes ? `${hour}:${minutes}` : '');
+                                        }}
+                                        className="w-16 h-9 rounded-md border border-input bg-background px-2 text-sm"
+                                      >
+                                        <option value="">--</option>
+                                        {['00', '15', '30', '45'].map(m => (
+                                          <option key={m} value={m}>{m}</option>
+                                        ))}
+                                      </select>
+                                    </div>
+                                  )}
+                                />
+                              </div>
+                              <div className="flex-1">
+                                <Label className="text-sm text-muted-foreground">
+                                  <Clock className="mr-1 inline h-3 w-3" />
+                                  {t('endTime')}
+                                </Label>
+                                <Controller
+                                  control={control}
+                                  name={`dateOptions.${index}.endTime`}
+                                  render={({ field: timeField }) => (
+                                    <div className="mt-1 flex gap-1 items-center">
+                                      <select
+                                        value={timeField.value?.split(':')[0] || ''}
+                                        onChange={(e) => {
+                                          const hour = e.target.value;
+                                          const minutes = timeField.value?.split(':')[1] || '00';
+                                          timeField.onChange(hour ? `${hour}:${minutes}` : '');
+                                        }}
+                                        className="w-16 h-9 rounded-md border border-input bg-background px-2 text-sm"
+                                      >
+                                        <option value="">--</option>
+                                        {Array.from({ length: 24 }, (_, i) => (
+                                          <option key={i} value={i.toString().padStart(2, '0')}>
+                                            {i.toString().padStart(2, '0')}
+                                          </option>
+                                        ))}
+                                      </select>
+                                      <span className="text-muted-foreground">:</span>
+                                      <select
+                                        value={timeField.value?.split(':')[1] || ''}
+                                        onChange={(e) => {
+                                          const hour = timeField.value?.split(':')[0] || '00';
+                                          const minutes = e.target.value;
+                                          timeField.onChange(minutes ? `${hour}:${minutes}` : '');
+                                        }}
+                                        className="w-16 h-9 rounded-md border border-input bg-background px-2 text-sm"
+                                      >
+                                        <option value="">--</option>
+                                        {['00', '15', '30', '45'].map(m => (
+                                          <option key={m} value={m}>{m}</option>
+                                        ))}
+                                      </select>
+                                    </div>
+                                  )}
+                                />
+                              </div>
+                            </>
+                          )}
+                          {dateFields.length > 2 && (
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => removeDate(index)}
+                              className="shrink-0"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          )}
                         </div>
-                        <div className="flex-1">
-                          <Label className="text-sm text-muted-foreground">
-                            <Clock className="mr-1 inline h-3 w-3" />
-                            {t('startTime')}
-                          </Label>
-                          <Input
-                            type="time"
-                            {...register(`dateOptions.${index}.startTime`)}
-                            className="mt-1"
-                          />
-                        </div>
-                        <div className="flex-1">
-                          <Label className="text-sm text-muted-foreground">
-                            <Clock className="mr-1 inline h-3 w-3" />
-                            {t('endTime')}
-                          </Label>
-                          <Input
-                            type="time"
-                            {...register(`dateOptions.${index}.endTime`)}
-                            className="mt-1"
-                          />
-                        </div>
-                        {dateFields.length > 2 && (
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => removeDate(index)}
-                            className="shrink-0"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        )}
-                      </div>
-                    ))}
+                      ))}
                     <Button
                       type="button"
                       variant="outline"

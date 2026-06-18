@@ -193,11 +193,6 @@ Nel dashboard Supabase → Authentication → Providers:
 3. Authorized redirect: `https://YOUR_PROJECT.supabase.co/auth/v1/callback`
 4. Copia Client ID e Secret in Supabase
 
-#### Apple Sign In
-1. Vai su [Apple Developer](https://developer.apple.com/)
-2. Crea App ID e Service ID
-3. Configura in Supabase
-
 ### 3. Configurare Resend (Email)
 
 1. Crea account su [resend.com](https://resend.com)
