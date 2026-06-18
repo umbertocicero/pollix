@@ -17,6 +17,8 @@ import {
   Trash2,
   RefreshCw,
   Ban,
+  ChevronDown,
+  Users,
 } from 'lucide-react';
 import type { User } from '@supabase/supabase-js';
 
@@ -37,6 +39,7 @@ import {
   CardFooter,
 } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 
 interface PollOption {
   id: string;
@@ -64,6 +67,7 @@ interface VoteResult {
   optionId: string;
   voteCount: number;
   percentage: number;
+  voterNames: string[];
 }
 
 interface UserVote {
@@ -158,7 +162,7 @@ export default function PollVotePage() {
 
     const { data: votesData } = await supabase
       .from('votes')
-      .select('option_id')
+      .select('option_id, voter_name')
       .eq('poll_id', pollData.id);
 
     const votes = votesData || [];
@@ -166,14 +170,20 @@ export default function PollVotePage() {
     setTotalVotes(total);
 
     const voteCounts: Record<string, number> = {};
-    votes.forEach(v => {
-      voteCounts[v.option_id] = (voteCounts[v.option_id] || 0) + 1;
+    const votersByOption: Record<string, string[]> = {};
+    votes.forEach((v: { option_id: string | null; voter_name: string | null }) => {
+      if (v.option_id) {
+        voteCounts[v.option_id] = (voteCounts[v.option_id] || 0) + 1;
+        if (!votersByOption[v.option_id]) votersByOption[v.option_id] = [];
+        if (v.voter_name) votersByOption[v.option_id].push(v.voter_name);
+      }
     });
 
     const resultsData: VoteResult[] = (optionsData || []).map(opt => ({
       optionId: opt.id,
       voteCount: voteCounts[opt.id] || 0,
       percentage: total > 0 ? Math.round((voteCounts[opt.id] || 0) / total * 100) : 0,
+      voterNames: votersByOption[opt.id] || [],
     }));
 
     setResults(resultsData);
@@ -865,9 +875,37 @@ export default function PollVotePage() {
                       </div>
                     );
                   })}
-                  <p className="text-sm text-muted-foreground">
-                    {t('poll.results.totalVotes', { count: totalVotes })}
-                  </p>
+                  
+                  {/* Collapsible voter details */}
+                  <Collapsible>
+                    <CollapsibleTrigger className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer group w-full">
+                      <Users className="h-4 w-4" />
+                      <span>{t('poll.results.totalVotes', { count: totalVotes })}</span>
+                      <ChevronDown className="h-4 w-4 transition-transform group-data-[state=open]:rotate-180" />
+                      <span className="text-xs opacity-60 ml-auto">{t('poll.results.clickToExpand')}</span>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="mt-3 space-y-3 animate-in slide-in-from-top-2">
+                      {options.map((option) => {
+                        const result = results.find((r) => r.optionId === option.id);
+                        if (!result || result.voterNames.length === 0) return null;
+                        return (
+                          <div key={option.id} className="rounded-lg bg-muted/50 p-3 space-y-2">
+                            <p className="text-sm font-medium">{getOptionText(option)}</p>
+                            <div className="flex flex-wrap gap-1.5">
+                              {result.voterNames.map((name, idx) => (
+                                <span
+                                  key={idx}
+                                  className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary"
+                                >
+                                  {name}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </CollapsibleContent>
+                  </Collapsible>
                 </div>
               )}
 
@@ -914,9 +952,37 @@ export default function PollVotePage() {
                       </div>
                     );
                   })}
-                  <p className="text-sm text-muted-foreground">
-                    {t('poll.results.totalVotes', { count: totalVotes })}
-                  </p>
+                  
+                  {/* Collapsible voter details */}
+                  <Collapsible>
+                    <CollapsibleTrigger className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer group w-full">
+                      <Users className="h-4 w-4" />
+                      <span>{t('poll.results.totalVotes', { count: totalVotes })}</span>
+                      <ChevronDown className="h-4 w-4 transition-transform group-data-[state=open]:rotate-180" />
+                      <span className="text-xs opacity-60 ml-auto">{t('poll.results.clickToExpand')}</span>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="mt-3 space-y-3 animate-in slide-in-from-top-2">
+                      {options.map((option) => {
+                        const result = results.find((r) => r.optionId === option.id);
+                        if (!result || result.voterNames.length === 0) return null;
+                        return (
+                          <div key={option.id} className="rounded-lg bg-muted/50 p-3 space-y-2">
+                            <p className="text-sm font-medium">{getOptionText(option)}</p>
+                            <div className="flex flex-wrap gap-1.5">
+                              {result.voterNames.map((name, idx) => (
+                                <span
+                                  key={idx}
+                                  className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary"
+                                >
+                                  {name}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </CollapsibleContent>
+                  </Collapsible>
                 </div>
               )}
             </CardContent>

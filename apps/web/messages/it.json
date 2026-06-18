@@ -130,7 +130,8 @@
       "noVotes": "Ancora nessun voto",
       "viewResults": "Mostra Risultati",
       "hideResults": "Nascondi Risultati",
-      "export": "Esporta Risultati"
+      "export": "Esporta Risultati",
+      "clickToExpand": "clicca per vedere chi ha votato"
     },
     "share": {
       "title": "Condividi Sondaggio",

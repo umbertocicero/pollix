@@ -130,7 +130,8 @@
       "noVotes": "No votes yet",
       "viewResults": "View Results",
       "hideResults": "Hide Results",
-      "export": "Export Results"
+      "export": "Export Results",
+      "clickToExpand": "click to see who voted"
     },
     "share": {
       "title": "Share Poll",
