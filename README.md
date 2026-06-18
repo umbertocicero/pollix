@@ -484,18 +484,20 @@ I contributi sono benvenuti!
 
 ### MVP (Completato) ✅
 - [x] Sondaggi scelta singola/multipla
-- [x] Sondaggi calendario
+- [x] Sondaggi calendario con date picker avanzato
 - [x] Link condivisibili + QR
-- [x] Votazione guest
-- [x] Dashboard base
-- [x] Multilingua IT/EN
+- [x] Votazione guest con tracciamento anonimo
+- [x] Modifica/eliminazione voti (utenti loggati e anonimi)
+- [x] Dashboard separata: I miei sondaggi / Sondaggi votati
+- [x] Risultati real-time con Supabase Realtime
+- [x] Multilingua IT/EN con rilevamento automatico browser
 - [x] Dark mode
 
 ### v1.1 (In Sviluppo) 🚧
 - [ ] Export CSV/PDF
-- [ ] Notifiche email
 - [ ] Protezione password sondaggi
 - [ ] Scadenza automatica
+- [ ] Notifiche email
 
 ### v1.2 (Pianificato) 📋
 - [ ] Integrazione Google Calendar
