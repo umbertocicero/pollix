@@ -210,12 +210,15 @@
       "email": "Email",
       "password": "Password",
       "confirmPassword": "Confirm Password",
+      "creating": "Creating account...",
+      "checkEmail": "Check your email for the confirmation link!",
       "hasAccount": "Already have an account?",
       "signIn": "Sign in"
     },
     "social": {
       "continueWith": "Continue with {provider}",
-      "google": "Google"
+      "google": "Google",
+      "orEmail": "Or continue with email"
     }
   },
   "errors": {

@@ -210,12 +210,15 @@
       "email": "Email",
       "password": "Password",
       "confirmPassword": "Conferma Password",
+      "creating": "Creando account...",
+      "checkEmail": "Controlla la tua email per confermare la registrazione!",
       "hasAccount": "Hai già un account?",
       "signIn": "Accedi"
     },
     "social": {
       "continueWith": "Continua con {provider}",
-      "google": "Google"
+      "google": "Google",
+      "orEmail": "O continua con email"
     }
   },
   "errors": {

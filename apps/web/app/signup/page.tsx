@@ -14,12 +14,15 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { createClient } from '@/lib/supabase/client';
 
-export default function LoginPage() {
-  const t = useTranslations('auth.login');
+export default function SignupPage() {
+  const t = useTranslations('auth.signup');
   const tSocial = useTranslations('auth.social');
+  const tErrors = useTranslations('errors');
   const router = useRouter();
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   // Check if user is already logged in
@@ -34,23 +37,41 @@ export default function LoginPage() {
     checkUser();
   }, [router]);
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validation
+    if (password.length < 8) {
+      toast.error(tErrors('passwordMin'));
+      return;
+    }
+    
+    if (password !== confirmPassword) {
+      toast.error(tErrors('passwordMatch'));
+      return;
+    }
+
     setIsLoading(true);
 
     try {
       const supabase = createClient();
-      const { error } = await supabase.auth.signInWithPassword({
+      const { error } = await supabase.auth.signUp({
         email,
         password,
+        options: {
+          data: {
+            full_name: name,
+          },
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        },
       });
 
       if (error) throw error;
 
-      toast.success('Welcome back!');
-      router.push('/dashboard');
+      toast.success(t('checkEmail'));
+      // Don't redirect - user needs to confirm email first
     } catch (error: any) {
-      toast.error(error.message || 'Failed to sign in');
+      toast.error(error.message || 'Failed to sign up');
     } finally {
       setIsLoading(false);
     }
@@ -124,8 +145,20 @@ export default function LoginPage() {
                 </div>
               </div>
 
-              {/* Email Login */}
-              <form onSubmit={handleLogin} className="space-y-4">
+              {/* Email Signup */}
+              <form onSubmit={handleSignup} className="space-y-4">
+                <div>
+                  <Label htmlFor="name">{t('name')}</Label>
+                  <Input
+                    id="name"
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Mario Rossi"
+                    required
+                    className="mt-1.5"
+                  />
+                </div>
                 <div>
                   <Label htmlFor="email">{t('email')}</Label>
                   <Input
@@ -139,33 +172,38 @@ export default function LoginPage() {
                   />
                 </div>
                 <div>
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="password">{t('password')}</Label>
-                    <Link
-                      href="/forgot-password"
-                      className="text-sm text-primary hover:underline"
-                    >
-                      {t('forgotPassword')}
-                    </Link>
-                  </div>
+                  <Label htmlFor="password">{t('password')}</Label>
                   <Input
                     id="password"
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
+                    minLength={8}
+                    className="mt-1.5"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="confirmPassword">{t('confirmPassword')}</Label>
+                  <Input
+                    id="confirmPassword"
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    required
+                    minLength={8}
                     className="mt-1.5"
                   />
                 </div>
                 <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? 'Signing in...' : t('title')}
+                  {isLoading ? t('creating') : t('title')}
                 </Button>
               </form>
 
               <p className="text-center text-sm text-muted-foreground">
-                {t('noAccount')}{' '}
-                <Link href="/signup" className="text-primary hover:underline">
-                  {t('signUp')}
+                {t('hasAccount')}{' '}
+                <Link href="/login" className="text-primary hover:underline">
+                  {t('signIn')}
                 </Link>
               </p>
             </CardContent>
