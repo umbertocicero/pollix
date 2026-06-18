@@ -209,7 +209,7 @@ export function PollDatePicker({ value, onChange }: PollDatePickerProps) {
 
           {/* Time inputs for each date - Apple style */}
           {showTimes && value.length > 0 && (
-            <div className="space-y-4 rounded-2xl bg-card/60 backdrop-blur border border-white/10 p-5">
+            <div className="space-y-4 rounded-2xl bg-card/60 backdrop-blur border border-white/10 p-4">
               <Label className="text-sm font-semibold flex items-center gap-2">
                 <Clock className="h-4 w-4 text-primary" />
                 {t('timeSlots')}
@@ -218,74 +218,82 @@ export function PollDatePicker({ value, onChange }: PollDatePickerProps) {
                 {value.filter(opt => opt.date).map((opt) => {
                   const date = new Date(opt.date);
                   return (
-                    <div key={opt.date} className="flex items-center gap-3 p-3 rounded-xl bg-muted/30">
-                      <div className="w-16 text-sm font-semibold shrink-0 text-primary">
+                    <div key={opt.date} className="p-3 rounded-xl bg-muted/30 space-y-3">
+                      <div className="text-sm font-semibold text-primary">
                         {format(date, 'd MMM', { locale: dateLocale })}
                       </div>
-                      <div className="flex items-center gap-1.5 flex-1 min-w-0">
-                        <select
-                          value={opt.startTime?.split(':')[0] || ''}
-                          onChange={(e) => {
-                            const hour = e.target.value;
-                            const minutes = opt.startTime?.split(':')[1] || '00';
-                            handleTimeChange(opt.date, 'startTime', hour ? `${hour}:${minutes}` : '');
-                          }}
-                          className="w-14 h-10 rounded-xl border-0 bg-background/80 px-2 text-sm font-medium text-center shadow-sm focus:ring-2 focus:ring-primary"
-                        >
-                          <option value="">--</option>
-                          {Array.from({ length: 24 }, (_, i) => (
-                            <option key={i} value={i.toString().padStart(2, '0')}>
-                              {i.toString().padStart(2, '0')}
-                            </option>
-                          ))}
-                        </select>
-                        <span className="text-muted-foreground font-bold">:</span>
-                        <select
-                          value={opt.startTime?.split(':')[1] || ''}
-                          onChange={(e) => {
-                            const hour = opt.startTime?.split(':')[0] || '00';
-                            const minutes = e.target.value;
-                            handleTimeChange(opt.date, 'startTime', minutes ? `${hour}:${minutes}` : '');
-                          }}
-                          className="w-14 h-10 rounded-xl border-0 bg-background/80 px-2 text-sm font-medium text-center shadow-sm focus:ring-2 focus:ring-primary"
-                        >
-                          <option value="">--</option>
-                          {['00', '15', '30', '45'].map(m => (
-                            <option key={m} value={m}>{m}</option>
-                          ))}
-                        </select>
-                        <span className="text-muted-foreground/50 mx-2">→</span>
-                        <select
-                          value={opt.endTime?.split(':')[0] || ''}
-                          onChange={(e) => {
-                            const hour = e.target.value;
-                            const minutes = opt.endTime?.split(':')[1] || '00';
-                            handleTimeChange(opt.date, 'endTime', hour ? `${hour}:${minutes}` : '');
-                          }}
-                          className="w-14 h-10 rounded-xl border-0 bg-background/80 px-2 text-sm font-medium text-center shadow-sm focus:ring-2 focus:ring-primary"
-                        >
-                          <option value="">--</option>
-                          {Array.from({ length: 24 }, (_, i) => (
-                            <option key={i} value={i.toString().padStart(2, '0')}>
-                              {i.toString().padStart(2, '0')}
-                            </option>
-                          ))}
-                        </select>
-                        <span className="text-muted-foreground font-bold">:</span>
-                        <select
-                          value={opt.endTime?.split(':')[1] || ''}
-                          onChange={(e) => {
-                            const hour = opt.endTime?.split(':')[0] || '00';
-                            const minutes = e.target.value;
-                            handleTimeChange(opt.date, 'endTime', minutes ? `${hour}:${minutes}` : '');
-                          }}
-                          className="w-14 h-10 rounded-xl border-0 bg-background/80 px-2 text-sm font-medium text-center shadow-sm focus:ring-2 focus:ring-primary"
-                        >
-                          <option value="">--</option>
-                          {['00', '15', '30', '45'].map(m => (
-                            <option key={m} value={m}>{m}</option>
-                          ))}
-                        </select>
+                      <div className="flex flex-wrap items-center gap-2">
+                        {/* Start time */}
+                        <div className="flex items-center gap-1">
+                          <select
+                            value={opt.startTime?.split(':')[0] || ''}
+                            onChange={(e) => {
+                              const hour = e.target.value;
+                              const minutes = opt.startTime?.split(':')[1] || '00';
+                              handleTimeChange(opt.date, 'startTime', hour ? `${hour}:${minutes}` : '');
+                            }}
+                            className="w-12 h-9 rounded-lg border-0 bg-background/80 px-1 text-sm font-medium text-center shadow-sm focus:ring-2 focus:ring-primary"
+                          >
+                            <option value="">--</option>
+                            {Array.from({ length: 24 }, (_, i) => (
+                              <option key={i} value={i.toString().padStart(2, '0')}>
+                                {i.toString().padStart(2, '0')}
+                              </option>
+                            ))}
+                          </select>
+                          <span className="text-muted-foreground font-bold">:</span>
+                          <select
+                            value={opt.startTime?.split(':')[1] || ''}
+                            onChange={(e) => {
+                              const hour = opt.startTime?.split(':')[0] || '00';
+                              const minutes = e.target.value;
+                              handleTimeChange(opt.date, 'startTime', minutes ? `${hour}:${minutes}` : '');
+                            }}
+                            className="w-12 h-9 rounded-lg border-0 bg-background/80 px-1 text-sm font-medium text-center shadow-sm focus:ring-2 focus:ring-primary"
+                          >
+                            <option value="">--</option>
+                            {['00', '15', '30', '45'].map(m => (
+                              <option key={m} value={m}>{m}</option>
+                            ))}
+                          </select>
+                        </div>
+                        
+                        <span className="text-muted-foreground/50">→</span>
+                        
+                        {/* End time */}
+                        <div className="flex items-center gap-1">
+                          <select
+                            value={opt.endTime?.split(':')[0] || ''}
+                            onChange={(e) => {
+                              const hour = e.target.value;
+                              const minutes = opt.endTime?.split(':')[1] || '00';
+                              handleTimeChange(opt.date, 'endTime', hour ? `${hour}:${minutes}` : '');
+                            }}
+                            className="w-12 h-9 rounded-lg border-0 bg-background/80 px-1 text-sm font-medium text-center shadow-sm focus:ring-2 focus:ring-primary"
+                          >
+                            <option value="">--</option>
+                            {Array.from({ length: 24 }, (_, i) => (
+                              <option key={i} value={i.toString().padStart(2, '0')}>
+                                {i.toString().padStart(2, '0')}
+                              </option>
+                            ))}
+                          </select>
+                          <span className="text-muted-foreground font-bold">:</span>
+                          <select
+                            value={opt.endTime?.split(':')[1] || ''}
+                            onChange={(e) => {
+                              const hour = opt.endTime?.split(':')[0] || '00';
+                              const minutes = e.target.value;
+                              handleTimeChange(opt.date, 'endTime', minutes ? `${hour}:${minutes}` : '');
+                            }}
+                            className="w-12 h-9 rounded-lg border-0 bg-background/80 px-1 text-sm font-medium text-center shadow-sm focus:ring-2 focus:ring-primary"
+                          >
+                            <option value="">--</option>
+                            {['00', '15', '30', '45'].map(m => (
+                              <option key={m} value={m}>{m}</option>
+                            ))}
+                          </select>
+                        </div>
                       </div>
                     </div>
                   );

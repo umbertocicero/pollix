@@ -16,6 +16,7 @@ import {
   Pencil,
   Trash2,
   RefreshCw,
+  Ban,
 } from 'lucide-react';
 import type { User } from '@supabase/supabase-js';
 
@@ -67,7 +68,8 @@ interface VoteResult {
 
 interface UserVote {
   id: string;
-  option_id: string;
+  option_id: string | null;
+  is_not_available?: boolean;
 }
 
 // Generate or retrieve anonymous fingerprint from localStorage
@@ -119,6 +121,7 @@ export default function PollVotePage() {
   const [userVotes, setUserVotes] = useState<UserVote[]>([]);
   const [isEditing, setIsEditing] = useState(false);
   const [anonymousFingerprint, setAnonymousFingerprint] = useState<string>('');
+  const [notAvailable, setNotAvailable] = useState(false);
   
   // Validation errors
   const [nameError, setNameError] = useState(false);
@@ -222,27 +225,35 @@ export default function PollVotePage() {
         // Check logged user votes
         const { data: votes } = await supabase
           .from('votes')
-          .select('id, option_id')
+          .select('id, option_id, is_not_available')
           .eq('poll_id', poll.id)
           .eq('user_id', currentUser.id);
         
         if (votes && votes.length > 0) {
           setUserVotes(votes);
           setHasVoted(true);
-          setSelectedOptions(votes.map(v => v.option_id));
+          const isNotAvailable = votes.some(v => v.is_not_available);
+          setNotAvailable(isNotAvailable);
+          if (!isNotAvailable) {
+            setSelectedOptions(votes.filter(v => v.option_id).map(v => v.option_id as string));
+          }
         }
       } else if (anonymousFingerprint) {
         // Check anonymous user votes by fingerprint
         const { data: votes } = await supabase
           .from('votes')
-          .select('id, option_id')
+          .select('id, option_id, is_not_available')
           .eq('poll_id', poll.id)
           .eq('voter_fingerprint', anonymousFingerprint);
         
         if (votes && votes.length > 0) {
           setUserVotes(votes);
           setHasVoted(true);
-          setSelectedOptions(votes.map(v => v.option_id));
+          const isNotAvailable = votes.some(v => v.is_not_available);
+          setNotAvailable(isNotAvailable);
+          if (!isNotAvailable) {
+            setSelectedOptions(votes.filter(v => v.option_id).map(v => v.option_id as string));
+          }
         }
       }
     };
@@ -291,7 +302,8 @@ export default function PollVotePage() {
       setNameError(true);
       hasErrors = true;
     }
-    if (selectedOptions.length === 0) {
+    // Selection required only if not marking as "not available"
+    if (selectedOptions.length === 0 && !notAvailable) {
       setSelectionError(true);
       hasErrors = true;
     }
@@ -307,13 +319,29 @@ export default function PollVotePage() {
         saveVoterName(voterName.trim());
       }
 
-      const votes = selectedOptions.map(optionId => ({
-        poll_id: poll.id,
-        option_id: optionId,
-        voter_name: voterName.trim() || null,
-        user_id: currentUser?.id || null,
-        voter_fingerprint: currentUser ? null : anonymousFingerprint,
-      }));
+      let votes;
+      
+      if (notAvailable) {
+        // Insert "not available" response
+        votes = [{
+          poll_id: poll.id,
+          option_id: null,
+          voter_name: voterName.trim() || null,
+          user_id: currentUser?.id || null,
+          voter_fingerprint: currentUser ? null : anonymousFingerprint,
+          is_not_available: true,
+        }];
+      } else {
+        // Insert regular votes
+        votes = selectedOptions.map(optionId => ({
+          poll_id: poll.id,
+          option_id: optionId,
+          voter_name: voterName.trim() || null,
+          user_id: currentUser?.id || null,
+          voter_fingerprint: currentUser ? null : anonymousFingerprint,
+          is_not_available: false,
+        }));
+      }
 
       const { error: voteError } = await supabase
         .from('votes')
@@ -330,18 +358,24 @@ export default function PollVotePage() {
       if (currentUser) {
         const { data: newVotes } = await supabase
           .from('votes')
-          .select('id, option_id')
+          .select('id, option_id, is_not_available')
           .eq('poll_id', poll.id)
           .eq('user_id', currentUser.id);
-        if (newVotes) setUserVotes(newVotes);
+        if (newVotes) {
+          setUserVotes(newVotes);
+          setNotAvailable(newVotes.some(v => v.is_not_available));
+        }
       } else if (anonymousFingerprint) {
         // Refresh anonymous user votes
         const { data: newVotes } = await supabase
           .from('votes')
-          .select('id, option_id')
+          .select('id, option_id, is_not_available')
           .eq('poll_id', poll.id)
           .eq('voter_fingerprint', anonymousFingerprint);
-        if (newVotes) setUserVotes(newVotes);
+        if (newVotes) {
+          setUserVotes(newVotes);
+          setNotAvailable(newVotes.some(v => v.is_not_available));
+        }
       }
     } catch (err) {
       console.error('Failed to vote:', err);
@@ -415,13 +449,29 @@ export default function PollVotePage() {
       }
 
       // Insert new votes
-      const votes = selectedOptions.map(optionId => ({
-        poll_id: poll.id,
-        option_id: optionId,
-        voter_name: voterName.trim() || null,
-        user_id: currentUser?.id || null,
-        voter_fingerprint: currentUser ? null : anonymousFingerprint,
-      }));
+      let votes;
+      
+      if (notAvailable) {
+        // Insert "not available" response
+        votes = [{
+          poll_id: poll.id,
+          option_id: null,
+          voter_name: voterName.trim() || null,
+          user_id: currentUser?.id || null,
+          voter_fingerprint: currentUser ? null : anonymousFingerprint,
+          is_not_available: true,
+        }];
+      } else {
+        // Insert regular votes
+        votes = selectedOptions.map(optionId => ({
+          poll_id: poll.id,
+          option_id: optionId,
+          voter_name: voterName.trim() || null,
+          user_id: currentUser?.id || null,
+          voter_fingerprint: currentUser ? null : anonymousFingerprint,
+          is_not_available: false,
+        }));
+      }
 
       const { error: voteError } = await supabase
         .from('votes')
@@ -437,17 +487,23 @@ export default function PollVotePage() {
       if (currentUser) {
         const { data: newVotes } = await supabase
           .from('votes')
-          .select('id, option_id')
+          .select('id, option_id, is_not_available')
           .eq('poll_id', poll.id)
           .eq('user_id', currentUser.id);
-        if (newVotes) setUserVotes(newVotes);
+        if (newVotes) {
+          setUserVotes(newVotes);
+          setNotAvailable(newVotes.some(v => v.is_not_available));
+        }
       } else if (anonymousFingerprint) {
         const { data: newVotes } = await supabase
           .from('votes')
-          .select('id, option_id')
+          .select('id, option_id, is_not_available')
           .eq('poll_id', poll.id)
           .eq('voter_fingerprint', anonymousFingerprint);
-        if (newVotes) setUserVotes(newVotes);
+        if (newVotes) {
+          setUserVotes(newVotes);
+          setNotAvailable(newVotes.some(v => v.is_not_available));
+        }
       }
     } catch (err) {
       console.error('Failed to modify vote:', err);
@@ -664,6 +720,7 @@ export default function PollVotePage() {
                                   if (checked) {
                                     setSelectedOptions([...selectedOptions, option.id]);
                                     setSelectionError(false);
+                                    setNotAvailable(false); // Deselect "not available" when selecting an option
                                   } else {
                                     setSelectedOptions(selectedOptions.filter((id) => id !== option.id));
                                   }
@@ -684,6 +741,53 @@ export default function PollVotePage() {
                     </div>
                   )}
                   
+                  {/* Not Available option - only for calendar polls */}
+                  {poll.poll_type === 'calendar' && (
+                    <div
+                      className={cn(
+                        'flex items-center justify-between rounded-lg border-2 border-dashed p-4 mt-4 transition-all cursor-pointer',
+                        notAvailable 
+                          ? 'border-orange-500 bg-orange-500/10' 
+                          : 'border-muted-foreground/30 hover:bg-muted/30'
+                      )}
+                      onClick={() => {
+                        if (!notAvailable) {
+                          setNotAvailable(true);
+                          setSelectedOptions([]);
+                          setSelectionError(false);
+                        } else {
+                          setNotAvailable(false);
+                        }
+                      }}
+                    >
+                      <div className="flex items-center space-x-3">
+                        <Checkbox
+                          id="not-available"
+                          checked={notAvailable}
+                          onCheckedChange={(checked) => {
+                            if (checked) {
+                              setNotAvailable(true);
+                              setSelectedOptions([]);
+                              setSelectionError(false);
+                            } else {
+                              setNotAvailable(false);
+                            }
+                          }}
+                          className="border-orange-500 data-[state=checked]:bg-orange-500 data-[state=checked]:border-orange-500"
+                        />
+                        <Label htmlFor="not-available" className="flex-1 cursor-pointer">
+                          <span className="text-base font-medium flex items-center gap-2">
+                            <Ban className="h-4 w-4 text-orange-500" />
+                            {t('poll.vote.notAvailable')}
+                          </span>
+                          <p className="text-sm text-muted-foreground mt-0.5">
+                            {t('poll.vote.notAvailableDescription')}
+                          </p>
+                        </Label>
+                      </div>
+                    </div>
+                  )}
+                  
                   {poll.show_results_before_vote && (
                     <p className="text-sm text-muted-foreground">
                       {t('poll.results.totalVotes', { count: totalVotes })}
@@ -695,13 +799,19 @@ export default function PollVotePage() {
               {/* Results after voting (for logged users who voted and are not editing) */}
               {hasVoted && currentUser && !isEditing && (
                 <div className="space-y-3">
-                  <div className="rounded-lg bg-primary/10 p-3 text-sm text-primary">
+                  <div className={cn(
+                    'rounded-lg p-3 text-sm',
+                    notAvailable ? 'bg-orange-500/10 text-orange-600' : 'bg-primary/10 text-primary'
+                  )}>
                     <span className="font-medium">{t('poll.vote.yourVote')}:</span>
                     {' '}
-                    {options
-                      .filter(opt => userVotes.some(v => v.option_id === opt.id))
-                      .map(opt => getOptionText(opt))
-                      .join(', ')}
+                    {notAvailable 
+                      ? t('poll.vote.notAvailableShort')
+                      : options
+                          .filter(opt => userVotes.some(v => v.option_id === opt.id))
+                          .map(opt => getOptionText(opt))
+                          .join(', ')
+                    }
                   </div>
                   {options.map((option) => {
                     const result = results.find((r) => r.optionId === option.id);
@@ -738,13 +848,19 @@ export default function PollVotePage() {
               {/* Results after voting (for anonymous users who voted and are not editing) */}
               {hasVoted && !currentUser && !isEditing && (
                 <div className="space-y-3">
-                  <div className="rounded-lg bg-primary/10 p-3 text-sm text-primary">
+                  <div className={cn(
+                    'rounded-lg p-3 text-sm',
+                    notAvailable ? 'bg-orange-500/10 text-orange-600' : 'bg-primary/10 text-primary'
+                  )}>
                     <span className="font-medium">{t('poll.vote.yourVote')}:</span>
                     {' '}
-                    {options
-                      .filter(opt => userVotes.some(v => v.option_id === opt.id))
-                      .map(opt => getOptionText(opt))
-                      .join(', ')}
+                    {notAvailable 
+                      ? t('poll.vote.notAvailableShort')
+                      : options
+                          .filter(opt => userVotes.some(v => v.option_id === opt.id))
+                          .map(opt => getOptionText(opt))
+                          .join(', ')
+                    }
                   </div>
                   {options.map((option) => {
                     const result = results.find((r) => r.optionId === option.id);

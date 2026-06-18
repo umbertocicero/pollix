@@ -398,17 +398,18 @@ export default function EditPollPage() {
                 {isCalendar ? (
                   <>
                     {dateFields.map((field, index) => (
-                        <div key={field.id} className="flex flex-col gap-2 rounded-lg border p-4 sm:flex-row sm:items-end">
-                          <div className="flex-1">
-                            <Label className="text-sm text-muted-foreground">
-                              <Calendar className="mr-1 inline h-3 w-3" />
+                        <div key={field.id} className="rounded-2xl bg-card/60 backdrop-blur border border-white/10 p-4 space-y-4">
+                          {/* Date Selection */}
+                          <div>
+                            <Label className="text-sm text-muted-foreground flex items-center gap-1.5 mb-2">
+                              <Calendar className="h-3.5 w-3.5" />
                               {t('date')}
                             </Label>
                             <Controller
                               control={control}
                               name={`dateOptions.${index}.date`}
                               render={({ field: dateField }) => (
-                                <div className="mt-1 flex gap-1">
+                                <div className="flex gap-2">
                                   <select
                                     value={dateField.value ? new Date(dateField.value).getDate().toString() : ''}
                                     onChange={(e) => {
@@ -417,7 +418,7 @@ export default function EditPollPage() {
                                       current.setDate(day);
                                       dateField.onChange(format(current, 'yyyy-MM-dd'));
                                     }}
-                                    className="w-16 h-9 rounded-md border border-input bg-background px-2 text-sm"
+                                    className="w-14 h-10 rounded-xl border-0 bg-background/80 px-2 text-sm font-medium text-center shadow-sm focus:ring-2 focus:ring-primary"
                                   >
                                     <option value="">{locale === 'it' ? 'GG' : 'DD'}</option>
                                     {Array.from({ length: 31 }, (_, i) => (
@@ -434,7 +435,7 @@ export default function EditPollPage() {
                                       current.setMonth(month);
                                       dateField.onChange(format(current, 'yyyy-MM-dd'));
                                     }}
-                                    className="w-16 h-9 rounded-md border border-input bg-background px-2 text-sm"
+                                    className="w-14 h-10 rounded-xl border-0 bg-background/80 px-2 text-sm font-medium text-center shadow-sm focus:ring-2 focus:ring-primary"
                                   >
                                     <option value="">{locale === 'it' ? 'MM' : 'MM'}</option>
                                     {Array.from({ length: 12 }, (_, i) => (
@@ -451,7 +452,7 @@ export default function EditPollPage() {
                                       current.setFullYear(year);
                                       dateField.onChange(format(current, 'yyyy-MM-dd'));
                                     }}
-                                    className="w-20 h-9 rounded-md border border-input bg-background px-2 text-sm"
+                                    className="w-20 h-10 rounded-xl border-0 bg-background/80 px-2 text-sm font-medium text-center shadow-sm focus:ring-2 focus:ring-primary"
                                   >
                                     <option value="">{locale === 'it' ? 'AAAA' : 'YYYY'}</option>
                                     {Array.from({ length: 5 }, (_, i) => (
@@ -464,18 +465,21 @@ export default function EditPollPage() {
                               )}
                             />
                           </div>
+                          
+                          {/* Time Selection */}
                           {hasTimeOptions && (
-                            <>
-                              <div className="flex-1">
-                                <Label className="text-sm text-muted-foreground">
-                                  <Clock className="mr-1 inline h-3 w-3" />
+                            <div className="flex flex-wrap items-center gap-4">
+                              {/* Start Time */}
+                              <div className="flex-1 min-w-[140px]">
+                                <Label className="text-sm text-muted-foreground flex items-center gap-1.5 mb-2">
+                                  <Clock className="h-3.5 w-3.5" />
                                   {t('startTime')}
                                 </Label>
                                 <Controller
                                   control={control}
                                   name={`dateOptions.${index}.startTime`}
                                   render={({ field: timeField }) => (
-                                    <div className="mt-1 flex gap-1 items-center">
+                                    <div className="flex items-center gap-1">
                                       <select
                                         value={timeField.value?.split(':')[0] || ''}
                                         onChange={(e) => {
@@ -483,7 +487,7 @@ export default function EditPollPage() {
                                           const minutes = timeField.value?.split(':')[1] || '00';
                                           timeField.onChange(hour ? `${hour}:${minutes}` : '');
                                         }}
-                                        className="w-16 h-9 rounded-md border border-input bg-background px-2 text-sm"
+                                        className="w-12 h-10 rounded-xl border-0 bg-background/80 px-1 text-sm font-medium text-center shadow-sm focus:ring-2 focus:ring-primary"
                                       >
                                         <option value="">--</option>
                                         {Array.from({ length: 24 }, (_, i) => (
@@ -492,7 +496,7 @@ export default function EditPollPage() {
                                           </option>
                                         ))}
                                       </select>
-                                      <span className="text-muted-foreground">:</span>
+                                      <span className="text-muted-foreground font-bold">:</span>
                                       <select
                                         value={timeField.value?.split(':')[1] || ''}
                                         onChange={(e) => {
@@ -500,7 +504,7 @@ export default function EditPollPage() {
                                           const minutes = e.target.value;
                                           timeField.onChange(minutes ? `${hour}:${minutes}` : '');
                                         }}
-                                        className="w-16 h-9 rounded-md border border-input bg-background px-2 text-sm"
+                                        className="w-12 h-10 rounded-xl border-0 bg-background/80 px-1 text-sm font-medium text-center shadow-sm focus:ring-2 focus:ring-primary"
                                       >
                                         <option value="">--</option>
                                         {['00', '15', '30', '45'].map(m => (
@@ -511,16 +515,20 @@ export default function EditPollPage() {
                                   )}
                                 />
                               </div>
-                              <div className="flex-1">
-                                <Label className="text-sm text-muted-foreground">
-                                  <Clock className="mr-1 inline h-3 w-3" />
+                              
+                              <span className="text-muted-foreground/50 mt-6">→</span>
+                              
+                              {/* End Time */}
+                              <div className="flex-1 min-w-[140px]">
+                                <Label className="text-sm text-muted-foreground flex items-center gap-1.5 mb-2">
+                                  <Clock className="h-3.5 w-3.5" />
                                   {t('endTime')}
                                 </Label>
                                 <Controller
                                   control={control}
                                   name={`dateOptions.${index}.endTime`}
                                   render={({ field: timeField }) => (
-                                    <div className="mt-1 flex gap-1 items-center">
+                                    <div className="flex items-center gap-1">
                                       <select
                                         value={timeField.value?.split(':')[0] || ''}
                                         onChange={(e) => {
@@ -528,7 +536,7 @@ export default function EditPollPage() {
                                           const minutes = timeField.value?.split(':')[1] || '00';
                                           timeField.onChange(hour ? `${hour}:${minutes}` : '');
                                         }}
-                                        className="w-16 h-9 rounded-md border border-input bg-background px-2 text-sm"
+                                        className="w-12 h-10 rounded-xl border-0 bg-background/80 px-1 text-sm font-medium text-center shadow-sm focus:ring-2 focus:ring-primary"
                                       >
                                         <option value="">--</option>
                                         {Array.from({ length: 24 }, (_, i) => (
@@ -537,7 +545,7 @@ export default function EditPollPage() {
                                           </option>
                                         ))}
                                       </select>
-                                      <span className="text-muted-foreground">:</span>
+                                      <span className="text-muted-foreground font-bold">:</span>
                                       <select
                                         value={timeField.value?.split(':')[1] || ''}
                                         onChange={(e) => {
@@ -545,7 +553,7 @@ export default function EditPollPage() {
                                           const minutes = e.target.value;
                                           timeField.onChange(minutes ? `${hour}:${minutes}` : '');
                                         }}
-                                        className="w-16 h-9 rounded-md border border-input bg-background px-2 text-sm"
+                                        className="w-12 h-10 rounded-xl border-0 bg-background/80 px-1 text-sm font-medium text-center shadow-sm focus:ring-2 focus:ring-primary"
                                       >
                                         <option value="">--</option>
                                         {['00', '15', '30', '45'].map(m => (
@@ -556,18 +564,23 @@ export default function EditPollPage() {
                                   )}
                                 />
                               </div>
-                            </>
+                            </div>
                           )}
-                          {dateFields.length > 2 && (
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => removeDate(index)}
-                              className="shrink-0"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
+                          
+                          {/* Delete button */}
+                          {dateFields.length > 1 && (
+                            <div className="flex justify-end pt-2 border-t border-white/10">
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => removeDate(index)}
+                                className="text-red-500 hover:text-red-600 hover:bg-red-500/10"
+                              >
+                                <Trash2 className="h-4 w-4 mr-1" />
+                                {t('removeDate')}
+                              </Button>
+                            </div>
                           )}
                         </div>
                       ))}
@@ -575,7 +588,7 @@ export default function EditPollPage() {
                       type="button"
                       variant="outline"
                       onClick={() => appendDate({ date: '', startTime: '', endTime: '' })}
-                      className="w-full"
+                      className="w-full h-12 rounded-2xl border-2 border-dashed border-primary/30 hover:border-primary hover:bg-primary/5 transition-all"
                     >
                       <Plus className="mr-2 h-4 w-4" />
                       {t('addDate')}

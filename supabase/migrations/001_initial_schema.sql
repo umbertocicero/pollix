@@ -125,14 +125,23 @@ CREATE POLICY "Anyone can create poll options" ON public.poll_options
 CREATE TABLE public.votes (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     poll_id UUID NOT NULL REFERENCES public.polls(id) ON DELETE CASCADE,
-    option_id UUID NOT NULL REFERENCES public.poll_options(id) ON DELETE CASCADE,
+    option_id UUID REFERENCES public.poll_options(id) ON DELETE CASCADE,
     
     -- Voter info
     user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
     voter_name TEXT,
     voter_fingerprint TEXT, -- For anonymous duplicate detection
     
-    created_at TIMESTAMPTZ DEFAULT NOW()
+    -- Not available flag (for "none of these work" responses)
+    is_not_available BOOLEAN DEFAULT false,
+    
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    
+    -- Constraint: either option_id or is_not_available must be set
+    CONSTRAINT votes_option_or_not_available CHECK (
+        (option_id IS NOT NULL AND is_not_available = false) OR
+        (option_id IS NULL AND is_not_available = true)
+    )
 );
 
 -- Enable RLS
@@ -163,6 +172,7 @@ CREATE INDEX idx_votes_poll_id ON public.votes(poll_id);
 CREATE INDEX idx_votes_option_id ON public.votes(option_id);
 CREATE INDEX idx_votes_user_id ON public.votes(user_id);
 CREATE INDEX idx_votes_voter_fingerprint ON public.votes(voter_fingerprint);
+CREATE INDEX idx_votes_not_available ON public.votes(poll_id, is_not_available) WHERE is_not_available = true;
 
 -- ===========================================
 -- FUNCTIONS
