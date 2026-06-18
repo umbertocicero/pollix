@@ -196,6 +196,34 @@ export default function PollVotePage() {
     checkUserVotes();
   }, [currentUser, poll]);
 
+  // Real-time subscription for vote updates
+  useEffect(() => {
+    if (!poll) return;
+
+    const supabase = createClient();
+    
+    const channel = supabase
+      .channel(`votes-${poll.id}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'votes',
+          filter: `poll_id=eq.${poll.id}`,
+        },
+        () => {
+          // Refresh poll data when votes change
+          fetchPollData();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [poll, fetchPollData]);
+
   const isOwner = poll && currentUser && poll.creator_id === currentUser.id;
 
   const handleVote = async () => {
