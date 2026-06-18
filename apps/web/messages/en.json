@@ -95,7 +95,9 @@
       "selectOptions": "Select options",
       "submitVote": "Submit Vote",
       "voteRecorded": "Your vote has been recorded!",
-      "alreadyVoted": "You have already voted"
+      "alreadyVoted": "You have already voted",
+      "voteDeleted": "Your vote has been deleted",
+      "voteModified": "Your vote has been updated"
     },
     "results": {
       "title": "Results",

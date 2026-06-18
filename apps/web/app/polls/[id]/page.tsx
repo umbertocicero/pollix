@@ -14,6 +14,8 @@ import {
   MessageCircle,
   Loader2,
   Pencil,
+  Trash2,
+  RefreshCw,
 } from 'lucide-react';
 import type { User } from '@supabase/supabase-js';
 
@@ -63,6 +65,11 @@ interface VoteResult {
   percentage: number;
 }
 
+interface UserVote {
+  id: string;
+  option_id: string;
+}
+
 export default function PollVotePage() {
   const t = useTranslations();
   const params = useParams();
@@ -82,6 +89,8 @@ export default function PollVotePage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [userVotes, setUserVotes] = useState<UserVote[]>([]);
+  const [isEditing, setIsEditing] = useState(false);
   
   // Validation errors
   const [nameError, setNameError] = useState(false);
@@ -141,14 +150,51 @@ export default function PollVotePage() {
   }, [pollId]);
 
   useEffect(() => {
-    const checkUser = async () => {
+    const checkUserAndVotes = async () => {
       const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();
       setCurrentUser(user);
+      
+      if (user) {
+        // Pre-fill voter name with user's name
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('full_name')
+          .eq('id', user.id)
+          .single();
+        
+        if (profile?.full_name) {
+          setVoterName(profile.full_name);
+        } else {
+          // Use email as fallback
+          setVoterName(user.email?.split('@')[0] || '');
+        }
+      }
     };
-    checkUser();
+    checkUserAndVotes();
     fetchPollData();
   }, [fetchPollData]);
+
+  // Check if logged user has already voted
+  useEffect(() => {
+    const checkUserVotes = async () => {
+      if (!currentUser || !poll) return;
+      
+      const supabase = createClient();
+      const { data: votes } = await supabase
+        .from('votes')
+        .select('id, option_id')
+        .eq('poll_id', poll.id)
+        .eq('user_id', currentUser.id);
+      
+      if (votes && votes.length > 0) {
+        setUserVotes(votes);
+        setHasVoted(true);
+        setSelectedOptions(votes.map(v => v.option_id));
+      }
+    };
+    checkUserVotes();
+  }, [currentUser, poll]);
 
   const isOwner = poll && currentUser && poll.creator_id === currentUser.id;
 
@@ -179,6 +225,7 @@ export default function PollVotePage() {
         poll_id: poll.id,
         option_id: optionId,
         voter_name: voterName.trim() || null,
+        user_id: currentUser?.id || null,
       }));
 
       const { error: voteError } = await supabase
@@ -188,11 +235,97 @@ export default function PollVotePage() {
       if (voteError) throw new Error(voteError.message);
 
       setHasVoted(true);
+      setIsEditing(false);
       toast.success(t('poll.vote.voteRecorded'));
       await fetchPollData();
+      
+      // Refresh user votes
+      if (currentUser) {
+        const { data: newVotes } = await supabase
+          .from('votes')
+          .select('id, option_id')
+          .eq('poll_id', poll.id)
+          .eq('user_id', currentUser.id);
+        if (newVotes) setUserVotes(newVotes);
+      }
     } catch (err) {
       console.error('Failed to vote:', err);
       toast.error('Failed to submit vote');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleDeleteVote = async () => {
+    if (!poll || !currentUser || userVotes.length === 0) return;
+    
+    setSubmitting(true);
+    const supabase = createClient();
+
+    try {
+      const { error } = await supabase
+        .from('votes')
+        .delete()
+        .eq('poll_id', poll.id)
+        .eq('user_id', currentUser.id);
+
+      if (error) throw new Error(error.message);
+
+      setUserVotes([]);
+      setHasVoted(false);
+      setSelectedOptions([]);
+      toast.success(t('poll.vote.voteDeleted') || 'Vote deleted');
+      await fetchPollData();
+    } catch (err) {
+      console.error('Failed to delete vote:', err);
+      toast.error('Failed to delete vote');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleModifyVote = async () => {
+    if (!poll || !currentUser) return;
+    
+    setSubmitting(true);
+    const supabase = createClient();
+
+    try {
+      // Delete old votes
+      await supabase
+        .from('votes')
+        .delete()
+        .eq('poll_id', poll.id)
+        .eq('user_id', currentUser.id);
+
+      // Insert new votes
+      const votes = selectedOptions.map(optionId => ({
+        poll_id: poll.id,
+        option_id: optionId,
+        voter_name: voterName.trim() || null,
+        user_id: currentUser.id,
+      }));
+
+      const { error: voteError } = await supabase
+        .from('votes')
+        .insert(votes);
+
+      if (voteError) throw new Error(voteError.message);
+
+      setIsEditing(false);
+      toast.success(t('poll.vote.voteModified') || 'Vote modified');
+      await fetchPollData();
+      
+      // Refresh user votes
+      const { data: newVotes } = await supabase
+        .from('votes')
+        .select('id, option_id')
+        .eq('poll_id', poll.id)
+        .eq('user_id', currentUser.id);
+      if (newVotes) setUserVotes(newVotes);
+    } catch (err) {
+      console.error('Failed to modify vote:', err);
+      toast.error('Failed to modify vote');
     } finally {
       setSubmitting(false);
     }
@@ -287,8 +420,8 @@ export default function PollVotePage() {
             </CardHeader>
 
             <CardContent className="space-y-6">
-              {/* Voter Name */}
-              {poll.require_name && !hasVoted && (
+              {/* Voter Name - show when not voted or editing, but disable for logged users */}
+              {poll.require_name && (!hasVoted || isEditing) && (
                 <div className="space-y-2">
                   <Label htmlFor="voterName" className="flex items-center gap-1 text-base font-semibold">
                     {t('poll.vote.yourName')}
@@ -302,11 +435,18 @@ export default function PollVotePage() {
                       if (e.target.value.trim()) setNameError(false);
                     }}
                     placeholder={t('poll.vote.namePlaceholder')}
+                    disabled={!!currentUser}
                     className={cn(
                       'text-base',
+                      currentUser && 'bg-muted cursor-not-allowed',
                       nameError && 'border-2 border-red-500 bg-red-500/10'
                     )}
                   />
+                  {currentUser && (
+                    <p className="text-xs text-muted-foreground">
+                      Nome compilato automaticamente dal tuo account
+                    </p>
+                  )}
                   {nameError && (
                     <div className="flex items-center gap-2 rounded-md bg-red-500/20 p-3 text-red-400">
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 shrink-0" viewBox="0 0 20 20" fill="currentColor">
@@ -319,7 +459,7 @@ export default function PollVotePage() {
               )}
               
               {/* Selection Error */}
-              {selectionError && !hasVoted && (
+              {selectionError && (!hasVoted || isEditing) && (
                 <div className="flex items-center gap-2 rounded-md bg-red-500/20 p-3 text-red-400">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 shrink-0" viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
@@ -328,8 +468,8 @@ export default function PollVotePage() {
                 </div>
               )}
 
-              {/* Voting Options */}
-              {!hasVoted && (
+              {/* Voting Options - show when not voted or editing */}
+              {(!hasVoted || isEditing) && (
                 <div className="space-y-3">
                   <Label className="flex items-center gap-1 text-base font-semibold">
                     {poll.poll_type === 'single_choice' ? 'Seleziona un opzione' : 'Seleziona le opzioni'}
@@ -422,8 +562,51 @@ export default function PollVotePage() {
                 </div>
               )}
 
-              {/* Results after voting */}
-              {hasVoted && (
+              {/* Results after voting (for logged users who voted and are not editing) */}
+              {hasVoted && currentUser && !isEditing && (
+                <div className="space-y-3">
+                  <div className="rounded-lg bg-primary/10 p-3 text-sm text-primary">
+                    <span className="font-medium">Il tuo voto:</span>
+                    {' '}
+                    {options
+                      .filter(opt => userVotes.some(v => v.option_id === opt.id))
+                      .map(opt => getOptionText(opt))
+                      .join(', ')}
+                  </div>
+                  {options.map((option) => {
+                    const result = results.find((r) => r.optionId === option.id);
+                    const isUserChoice = userVotes.some(v => v.option_id === option.id);
+                    return (
+                      <div key={option.id} className="space-y-1">
+                        <div className="flex items-center justify-between text-sm">
+                          <span className={cn('font-medium', isUserChoice && 'text-primary')}>
+                            {isUserChoice && '✓ '}
+                            {getOptionText(option)}
+                          </span>
+                          <span className="text-muted-foreground">
+                            {result?.voteCount || 0} ({result?.percentage || 0}%)
+                          </span>
+                        </div>
+                        <div className="h-3 overflow-hidden rounded-full bg-muted">
+                          <div
+                            className={cn(
+                              'h-full transition-all duration-500',
+                              isUserChoice ? 'bg-primary' : 'bg-muted-foreground/30'
+                            )}
+                            style={{ width: `${result?.percentage || 0}%` }}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
+                  <p className="text-sm text-muted-foreground">
+                    {t('poll.results.totalVotes', { count: totalVotes })}
+                  </p>
+                </div>
+              )}
+
+              {/* Results after voting (for anonymous users who voted) */}
+              {hasVoted && !currentUser && (
                 <div className="space-y-3">
                   {options.map((option) => {
                     const result = results.find((r) => r.optionId === option.id);
@@ -452,7 +635,8 @@ export default function PollVotePage() {
             </CardContent>
 
             <CardFooter className="flex-col gap-4">
-              {!hasVoted && (
+              {/* Submit button for new votes */}
+              {(!hasVoted || isEditing) && !currentUser && (
                 <Button 
                   onClick={handleVote} 
                   className="w-full" 
@@ -470,7 +654,85 @@ export default function PollVotePage() {
                 </Button>
               )}
 
-              {hasVoted && (
+              {/* Submit button for logged in user's first vote */}
+              {!hasVoted && currentUser && (
+                <Button 
+                  onClick={handleVote} 
+                  className="w-full" 
+                  size="lg"
+                  disabled={submitting}
+                >
+                  {submitting ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Invio in corso...
+                    </>
+                  ) : (
+                    t('poll.vote.submitVote')
+                  )}
+                </Button>
+              )}
+
+              {/* Edit/Delete buttons for logged users who have voted */}
+              {hasVoted && currentUser && !isEditing && (
+                <div className="flex w-full gap-3">
+                  <Button 
+                    variant="outline"
+                    onClick={() => setIsEditing(true)} 
+                    className="flex-1"
+                    disabled={submitting}
+                  >
+                    <RefreshCw className="mr-2 h-4 w-4" />
+                    Modifica voto
+                  </Button>
+                  <Button 
+                    variant="destructive"
+                    onClick={handleDeleteVote}
+                    className="flex-1"
+                    disabled={submitting}
+                  >
+                    {submitting ? (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    ) : (
+                      <Trash2 className="mr-2 h-4 w-4" />
+                    )}
+                    Elimina voto
+                  </Button>
+                </div>
+              )}
+
+              {/* Save/Cancel buttons when editing */}
+              {isEditing && currentUser && (
+                <div className="flex w-full gap-3">
+                  <Button 
+                    variant="outline"
+                    onClick={() => {
+                      setIsEditing(false);
+                      setSelectedOptions(userVotes.map(v => v.option_id));
+                    }}
+                    className="flex-1"
+                  >
+                    Annulla
+                  </Button>
+                  <Button 
+                    onClick={handleModifyVote}
+                    className="flex-1"
+                    disabled={submitting || selectedOptions.length === 0}
+                  >
+                    {submitting ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Salvataggio...
+                      </>
+                    ) : (
+                      'Salva modifiche'
+                    )}
+                  </Button>
+                </div>
+              )}
+
+              {/* Confirmation message for anonymous users */}
+              {hasVoted && !currentUser && (
                 <div className="flex w-full items-center justify-center gap-2 rounded-lg bg-accent/10 p-4 text-accent">
                   <Check className="h-5 w-5" />
                   <span className="font-medium">{t('poll.vote.voteRecorded')}</span>
