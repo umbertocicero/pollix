@@ -497,7 +497,9 @@ I contributi sono benvenuti!
 - [ ] Export CSV/PDF
 - [ ] Protezione password sondaggi
 - [ ] Scadenza automatica
-- [ ] Notifiche email
+- [ ] Notifiche email (verificare costi)
+- [ ] Moglioramenti UX/UI Mobile
+- [ ] Modifica dati utente per utenti registrati tramite email
 
 ### v1.2 (Pianificato) 📋
 - [ ] Integrazione Google Calendar

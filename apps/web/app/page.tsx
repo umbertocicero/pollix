@@ -30,11 +30,11 @@ export default function HomePage() {
               <p className="mt-6 text-lg leading-8 text-muted-foreground">
                 {t('home.hero.subtitle')}
               </p>
-              <div className="mt-10 flex items-center justify-center gap-x-4">
-                <Button asChild size="lg" className="bg-primary hover:bg-primary-600">
+              <div className="mt-10 mx-auto w-full max-w-md px-2 grid grid-cols-1 gap-3 sm:max-w-none sm:px-0 sm:flex sm:items-center sm:justify-center sm:gap-x-4">
+                <Button asChild size="lg" className="w-full sm:w-auto bg-primary hover:bg-primary-600">
                   <Link href="/polls/create">{t('home.hero.cta')}</Link>
                 </Button>
-                <Button asChild variant="outline" size="lg">
+                <Button asChild variant="outline" size="lg" className="w-full sm:w-auto">
                   <Link href="#features">{t('home.hero.ctaSecondary')}</Link>
                 </Button>
               </div>
