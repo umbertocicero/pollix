@@ -13,6 +13,16 @@ export const metadata: Metadata = {
   description:
     'Create polls, schedule meetings, and collect availability in minutes. No registration required.',
   keywords: ['polls', 'scheduling', 'meetings', 'voting', 'availability'],
+  icons: {
+    icon: '/icon.svg',
+    apple: '/apple-icon.svg',
+  },
+  openGraph: {
+    title: 'Planora - Simple polls for better decisions',
+    description: 'Create polls, schedule meetings, and collect availability in minutes.',
+    type: 'website',
+    siteName: 'Planora',
+  },
 };
 
 export default async function RootLayout({
