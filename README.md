@@ -390,26 +390,36 @@ Questa sezione spiega cosa configurare per rendere il sito indicizzabile e verif
 1) Variabili d'ambiente richieste
 - `NEXT_PUBLIC_APP_URL` — URL pubblico della tua app (es. `https://planora-poll.vercel.app`). Usata nei metadata, sitemap e schema.
 - `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` — stringa di verifica (se usi il meta tag per Search Console). Non è un segreto sensibile, ma gestiscila come variabile d'ambiente.
-- `NEXT_PUBLIC_GOOGLE_ANALYTICS_ID` — ID di Google Analytics (es. `G-XXXXXXXXXX`) per lo snippet `gtag.js`.
+- `NEXT_PUBLIC_GTM_ID` — ID del container Google Tag Manager (es. `GTM-XXXXXXX`). Se impostato, il layout caricherà GTM e il `noscript` necessario.
+- `NEXT_PUBLIC_COOKIEYES_ID` — ID del banner CookieYes (la parte `client_data/...` del tag CookieYes).
+- `NEXT_PUBLIC_GOOGLE_ANALYTICS_ID` — ID di Google Analytics (es. `G-XXXXXXXXXX`) per lo snippet `gtag.js`; viene usato solo se non sono impostati `NEXT_PUBLIC_GTM_ID` o `NEXT_PUBLIC_COOKIEYES_ID`.
 
 2) Verifica sito su Google Search Console
-- Metodo file HTML (consigliato semplice): copiare il file di verifica `google<id>.html` nella cartella `apps/web/public/` e deployare. Google cercherà `https://TUO_DOMINIO/google<id>.html`.
-- Metodo meta tag: impostare `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` e deployare — il progetto aggiunge automaticamente la meta `verification.google` nei metadata.
-- Metodo Google Analytics: se il sito è collegato a una proprietà GA con permessi di modifica, puoi usare il metodo "Google Analytics".
-- Metodo DNS: aggiungi il record TXT richiesto presso il tuo DNS.
+- Metodo file HTML (consigliato): copia il file di verifica `google<id>.html` in `apps/web/public/` e deploya. Google cercherà `https://TUO_DOMINIO/google<id>.html`.
+- Metodo meta tag: imposta `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` e deploya — il progetto aggiunge automaticamente la meta `verification.google` nei metadata.
+- Metodo Google Tag Manager: se hai creato un container GTM e lo hai impostato con `NEXT_PUBLIC_GTM_ID`, Search Console può rilevare il riferimento GTM.
+- Metodo Google Analytics: se il sito è collegato a una proprietà GA con permessi di modifica, puoi usare il metodo "Google Analytics", ma è meno affidabile quando usi banner cookie/CMP.
+- Metodo DNS: aggiungi il record TXT richiesto dal provider DNS.
 
 3) robots.txt e sitemap
 - Il file pubblico è `apps/web/public/robots.txt` e contiene la direttiva `Sitemap: https://planora-poll.vercel.app/sitemap.xml` per impostazione predefinita.
-- Se il tuo dominio è diverso, assicurati che `NEXT_PUBLIC_APP_URL` sia impostato sul dominio corretto prima del deploy, oppure modifica `apps/web/public/robots.txt` di conseguenza.
+- Se il dominio reale è diverso, imposta `NEXT_PUBLIC_APP_URL` sul dominio corretto e/o aggiorna `apps/web/public/robots.txt` di conseguenza.
 - Dopo il deploy, controlla:
    - `https://TUO_DOMINIO/robots.txt`
    - `https://TUO_DOMINIO/sitemap.xml`
 
-4) Google Analytics (verifica e raccolta dati)
-- Aggiungi `NEXT_PUBLIC_GOOGLE_ANALYTICS_ID` nelle env di Vercel; il progetto include lo snippet `gtag.js` automaticamente se la variabile è impostata.
-- Per usare il metodo "Google Analytics" in Search Console devi avere i permessi di modifica sulla proprietà GA.
+4) GTM, CookieYes e Google Analytics
+- GTM: imposta `NEXT_PUBLIC_GTM_ID`; il progetto caricherà il codice Google Tag Manager nel `<head>` e il `noscript` nel `<body>`.
+- CookieYes: imposta `NEXT_PUBLIC_COOKIEYES_ID`; il progetto caricherà il banner CookieYes prima degli altri script.
+- Google Analytics diretto: imposta `NEXT_PUBLIC_GOOGLE_ANALYTICS_ID` solo se non usi GTM o CookieYes.
+- Se hai utenti nel SEE, usa una CMP/bannere cookie e Google Consent Mode prima di caricare qualsiasi script di tracciamento.
 
-5) Istruzioni veloci per test locale e deploy
+5) Setup rapido per il tuo caso
+- Se hai già `NEXT_PUBLIC_GTM_ID=GTM-M8ZLT7QC`, usa GTM.
+- Se vuoi anche un banner di consenso, imposta `NEXT_PUBLIC_COOKIEYES_ID=4e25998bf314967534c3cc43`.
+- Se non vuoi usare GTM/CookieYes, lascia vuote quelle variabili e usa solo `NEXT_PUBLIC_GOOGLE_ANALYTICS_ID`.
+
+6) Istruzioni veloci per test locale e deploy
 - Localmente puoi controllare che tutto sia presente eseguendo:
    ```bash
    pnpm dev
@@ -418,9 +428,10 @@ Questa sezione spiega cosa configurare per rendere il sito indicizzabile e verif
 - Dopo il deploy, apri `https://TUO_DOMINIO/` e verifica:
    - presenza del meta tag di verifica (se usi il metodo tag)
    - presenza del file `google<id>.html` alla root (se usi il metodo file)
-   - presenza dello snippet `gtag/js?id=...` nel `<head>` (se hai impostato GA)
+   - presenza del container GTM in head e del `noscript` nel body (se usi GTM)
+   - presenza del banner CookieYes (se usi CookieYes)
 
-6) Nota importante per fork pubblici
+7) Nota importante per fork pubblici
 - Questo repository è pubblico: chiunque può forkare la repo. Non mettere mai chiavi segrete o credenziali nel sorgente.
 - Quando fai fork e deploy su Vercel / altro, configura le variabili d'ambiente nel pannello del progetto (Settings → Environment Variables). Non commitare `.env.local` nel fork.
 - Se vuoi che altri verifichino il loro deployment con Google Search Console, devono usare il loro dominio di deploy (es. `https://nome-fork.vercel.app`) e ripetere la procedura di verifica (file HTML o meta tag o DNS) per il loro dominio.
