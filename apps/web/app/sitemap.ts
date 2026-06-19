@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://planora-jet.vercel.app';
+  const baseUrl = 'https://planora-poll.vercel.app';
 
   return [
     {

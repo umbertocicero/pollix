@@ -23,7 +23,7 @@ NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION=your_verification_code_here
 **Come ottenere il codice:**
 1. Vai a [Google Search Console](https://search.google.com/search-console)
 2. Clicca "Aggiungi proprietà"
-3. Scegli "URL prefix": `https://planora-jet.vercel.app`
+3. Scegli "URL prefix": `https://planora-poll.vercel.app`
 4. Nella sezione "Verifica", seleziona "Meta tag HTML"
 5. Copia il `content` del tag meta (la stringa dopo `content="`)
 
@@ -49,7 +49,7 @@ NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION=abc123def456ghi789
 #### 2. Aggiungi proprietà
 - Clicca il bottone **"Aggiungi proprietà"**
 - Scegli **"Prefisso URL"**
-- Incolla: `https://planora-jet.vercel.app`
+- Incolla: `https://planora-poll.vercel.app`
 
 #### 3. Verifica proprietà (2 opzioni)
 
@@ -70,7 +70,7 @@ NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION=abc123def456ghi789
 #### 4. Invia la Sitemap
 1. Una volta verificato, vai in GSC → **Sitemap**
 2. Clicca "Aggiungi/Testa Sitemap"
-3. Incolla: `https://planora-jet.vercel.app/sitemap.xml`
+3. Incolla: `https://planora-poll.vercel.app/sitemap.xml`
 4. Clicca "Invia"
 5. Google inizierà a scansionare le pagine
 
@@ -82,10 +82,10 @@ Dopo il deploy, visita questi URL per confermare:
 
 ```bash
 # Robots.txt
-https://planora-jet.vercel.app/robots.txt
+https://planora-poll.vercel.app/robots.txt
 
 # Sitemap
-https://planora-jet.vercel.app/sitemap.xml
+https://planora-poll.vercel.app/sitemap.xml
 
 # Meta tag verificazione (inspector)
 # Apri DevTools (F12) → Head → cerca "google-site-verification"
@@ -112,7 +112,7 @@ Per tracciare il traffico dal sito:
 
 ### Crea un account:
 1. Vai a [Google Analytics](https://analytics.google.com)
-2. Crea proprietà per `planora-jet.vercel.app`
+2. Crea proprietà per `planora-poll.vercel.app`
 3. Copia il Measurement ID (formato: `G-XXXXXXXXXX`)
 
 ### Aggiungi al progetto:

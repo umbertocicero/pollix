@@ -7,7 +7,7 @@ export default function robots(): MetadataRoute.Robots {
       allow: '/',
       disallow: ['/auth/', '/dashboard/', '/api/'],
     },
-    sitemap: 'https://planora-jet.vercel.app/sitemap.xml',
-    host: 'https://planora-jet.vercel.app',
+    sitemap: 'https://planora-poll.vercel.app/sitemap.xml',
+    host: 'https://planora-poll.vercel.app',
   };
 }

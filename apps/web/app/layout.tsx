@@ -8,13 +8,14 @@ import { Toaster } from '@/components/ui/sonner';
 import './globals.css';
 
 const inter = Inter({ subsets: ['latin'] });
+const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://planora-poll.vercel.app';
 
 export const metadata: Metadata = {
   title: 'Planora - Simple polls for better decisions',
   description:
     'Create polls and schedule meetings in minutes. Participants can vote without registration.',
   keywords: ['polls', 'scheduling', 'meetings', 'voting', 'availability', 'survey', 'decision making'],
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://planora-jet.vercel.app'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://planora-poll.vercel.app'),
   icons: {
     icon: '/icon',
     apple: '/apple-icon',
@@ -29,7 +30,7 @@ export const metadata: Metadata = {
     type: 'website',
     siteName: 'Planora',
     images: ['/opengraph-image.png'],
-    url: 'https://planora-jet.vercel.app',
+    url: 'https://planora-poll.vercel.app',
     locale: 'en_US',
   },
   twitter: {
@@ -46,7 +47,7 @@ export const metadata: Metadata = {
     'max-video-preview': -1,
   },
   alternates: {
-    canonical: 'https://planora-jet.vercel.app',
+    canonical: 'https://planora-poll.vercel.app',
   },
 };
 
@@ -68,7 +69,9 @@ export default async function RootLayout({
               '@context': 'https://schema.org',
               '@type': 'SoftwareApplication',
               name: 'Planora',
-              description: messages?.seo?.description || 'Create polls and schedule meetings in minutes. Participants can vote without registration.',
+              description: typeof messages === 'object' && messages !== null && 'seo' in messages && typeof messages.seo?.description === 'string'
+                ? messages.seo.description
+                : 'Create polls and schedule meetings in minutes. Participants can vote without registration.',
               url: appUrl,
               applicationCategory: 'BusinessApplication',
               offers: {
