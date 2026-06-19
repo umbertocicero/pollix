@@ -577,6 +577,7 @@ I contributi sono benvenuti!
 - [ ] Allineare pulsanti toolbar a sinistra
 - [ ] Rimuovere cognome dalla toolbar
 - [ ] Aggiungere numero di versione del software nel footer
+- [ ] Ottimizzazione DB (tabella boll result)
 
 ### v1.2 (Pianificato) 📋
 - [ ] Integrazione Google Calendar
