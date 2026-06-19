@@ -6,7 +6,7 @@ Disallow: /dashboard/
 Disallow: /api/
 
 # Sitemap
-Sitemap: https://planora-poll.vercel.app/sitemap.xml
+Sitemap: /sitemap.xml
 
-# Host preference
-Host: https://planora-poll.vercel.app
+# Host preference (leave empty or set in server env)
+# Host: https://your-domain.example.com
