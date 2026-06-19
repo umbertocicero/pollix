@@ -1,0 +1,12 @@
+# Robots.txt for Planora
+User-agent: *
+Allow: /
+Disallow: /auth/
+Disallow: /dashboard/
+Disallow: /api/
+
+# Sitemap
+Sitemap: https://planora-jet.vercel.app/sitemap.xml
+
+# Host preference
+Host: https://planora-jet.vercel.app

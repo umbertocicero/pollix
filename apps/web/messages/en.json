@@ -18,6 +18,9 @@
     "or": "or",
     "and": "and"
   },
+  "seo": {
+    "description": "Create polls online for free, schedule meetings, and collect availability in minutes. Participants can vote without registration."
+  },
   "nav": {
     "home": "Home",
     "dashboard": "Dashboard",

@@ -18,6 +18,9 @@
     "or": "o",
     "and": "e"
   },
+  "seo": {
+    "description": "Crea sondaggi online gratis, pianifica riunioni e raccogli disponibilità in pochi minuti. I partecipanti possono votare senza registrazione."
+  },
   "nav": {
     "home": "Home",
     "dashboard": "Dashboard",
