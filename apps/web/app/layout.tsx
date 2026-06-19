@@ -51,12 +51,24 @@ export const metadata: Metadata = {
   },
 };
 
+function hasSeoDescription(messages: unknown): messages is { seo: { description: string } } {
+  return (
+    typeof messages === 'object' &&
+    messages !== null &&
+    'seo' in messages &&
+    typeof (messages as any).seo?.description === 'string'
+  );
+}
+
 export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   const messages = await getMessages();
+  const schemaDescription = hasSeoDescription(messages)
+    ? messages.seo.description
+    : 'Create polls and schedule meetings in minutes. Participants can vote without registration.';
 
   return (
     <html lang="en" suppressHydrationWarning>
@@ -69,9 +81,7 @@ export default async function RootLayout({
               '@context': 'https://schema.org',
               '@type': 'SoftwareApplication',
               name: 'Planora',
-              description: typeof messages === 'object' && messages !== null && 'seo' in messages && typeof messages.seo?.description === 'string'
-                ? messages.seo.description
-                : 'Create polls and schedule meetings in minutes. Participants can vote without registration.',
+              description: schemaDescription,
               url: appUrl,
               applicationCategory: 'BusinessApplication',
               offers: {
