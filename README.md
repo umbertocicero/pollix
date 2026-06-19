@@ -505,6 +505,8 @@ I contributi sono benvenuti!
 - [ ] Integrazione Google Calendar
 - [ ] Webhook per notifiche
 - [ ] Statistiche avanzate
+- [ ] Monitizzare tramite pubblicità
+- [ ] Identificare mobile e suggerire il salvataggio su schermata home
 
 ### v2.0 (Futuro) 🔮
 - [ ] AI: suggerimento slot migliori

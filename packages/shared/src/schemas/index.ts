@@ -50,10 +50,17 @@ export const createPollSchema = z.object({
 // Vote Schema
 export const createVoteSchema = z.object({
   pollId: z.string().uuid(),
-  optionIds: z.array(z.string().uuid()).min(1, 'Select at least one option'),
+  optionIds: z.array(z.string().uuid()),
+  isNotAvailable: z.boolean().optional(),
   voterName: z.string().min(1).max(100).optional(),
   password: z.string().optional(),
-});
+}).refine(
+  (data) => data.isNotAvailable || data.optionIds.length > 0,
+  {
+    message: 'Select at least one option or mark not available',
+    path: ['optionIds'],
+  }
+);
 
 // Update Profile Schema
 export const updateProfileSchema = z.object({

@@ -29,8 +29,19 @@ export class VotesService {
       throw new BadRequestException('Poll has expired');
     }
 
-    // Validate number of selections for multiple choice
-    if (poll.poll_type === 'multiple_choice') {
+    const isNotAvailable = input.isNotAvailable === true;
+
+    if (isNotAvailable && poll.poll_type !== 'calendar') {
+      throw new BadRequestException(
+        'Not-available response is only supported for calendar polls',
+      );
+    }
+
+    if (!isNotAvailable && input.optionIds.length === 0) {
+      throw new BadRequestException('Select at least one option');
+    }
+
+    if (!isNotAvailable && poll.poll_type === 'multiple_choice') {
       if (input.optionIds.length < poll.min_selections) {
         throw new BadRequestException(
           `Select at least ${poll.min_selections} options`,
@@ -44,7 +55,7 @@ export class VotesService {
     }
 
     // For single choice, only allow one selection
-    if (poll.poll_type === 'single_choice' && input.optionIds.length > 1) {
+    if (!isNotAvailable && poll.poll_type === 'single_choice' && input.optionIds.length > 1) {
       throw new BadRequestException('Only one option allowed');
     }
 
@@ -54,12 +65,23 @@ export class VotesService {
     }
 
     // Create votes
-    const votesToInsert = input.optionIds.map((optionId) => ({
-      poll_id: input.pollId,
-      option_id: optionId,
-      user_id: userId || null,
-      voter_name: input.voterName || null,
-    }));
+    const votesToInsert = isNotAvailable
+      ? [
+          {
+            poll_id: input.pollId,
+            option_id: null,
+            user_id: userId || null,
+            voter_name: input.voterName || null,
+            is_not_available: true,
+          },
+        ]
+      : input.optionIds.map((optionId) => ({
+          poll_id: input.pollId,
+          option_id: optionId,
+          user_id: userId || null,
+          voter_name: input.voterName || null,
+          is_not_available: false,
+        }));
 
     const { data: votes, error: voteError } = await client
       .from('votes')
@@ -94,6 +116,7 @@ export class VotesService {
       optionId: data.option_id,
       userId: data.user_id,
       voterName: data.voter_name,
+      isNotAvailable: data.is_not_available,
       createdAt: data.created_at,
     };
   }

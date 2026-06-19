@@ -3,7 +3,7 @@ import {
   IsOptional,
   IsArray,
   IsUUID,
-  ArrayMinSize,
+  IsBoolean,
   MaxLength,
   MinLength,
 } from 'class-validator';
@@ -13,9 +13,12 @@ export class CreateVoteDto {
   pollId: string;
 
   @IsArray()
-  @ArrayMinSize(1)
   @IsUUID('4', { each: true })
   optionIds: string[];
+
+  @IsOptional()
+  @IsBoolean()
+  isNotAvailable?: boolean;
 
   @IsOptional()
   @IsString()

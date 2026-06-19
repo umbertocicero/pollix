@@ -131,7 +131,8 @@
       "viewResults": "Mostra Risultati",
       "hideResults": "Nascondi Risultati",
       "export": "Esporta Risultati",
-      "clickToExpand": "clicca per vedere chi ha votato"
+      "clickToExpand": "clicca per vedere chi ha votato",
+      "hiddenVoters": "Nomi non disponibili"
     },
     "share": {
       "title": "Condividi Sondaggio",

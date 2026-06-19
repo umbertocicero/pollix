@@ -52,9 +52,10 @@ export interface PollOption {
 export interface Vote {
   id: string;
   pollId: string;
-  optionId: string;
+  optionId: string | null;
   userId: string | null;
   voterName: string | null;
+  isNotAvailable?: boolean;
   createdAt: string;
 }
 
@@ -122,6 +123,7 @@ export interface CreatePollOptionInput {
 export interface CreateVoteInput {
   pollId: string;
   optionIds: string[];
+  isNotAvailable?: boolean;
   voterName?: string;
   password?: string;
 }

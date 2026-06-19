@@ -126,6 +126,8 @@ export default function PollVotePage() {
   const [isEditing, setIsEditing] = useState(false);
   const [anonymousFingerprint, setAnonymousFingerprint] = useState<string>('');
   const [notAvailable, setNotAvailable] = useState(false);
+  const [notAvailableVoterNames, setNotAvailableVoterNames] = useState<string[]>([]);
+  const [notAvailableCount, setNotAvailableCount] = useState(0);
   
   // Validation errors
   const [nameError, setNameError] = useState(false);
@@ -162,7 +164,7 @@ export default function PollVotePage() {
 
     const { data: votesData } = await supabase
       .from('votes')
-      .select('option_id, voter_name')
+      .select('option_id, voter_name, is_not_available')
       .eq('poll_id', pollData.id);
 
     const votes = votesData || [];
@@ -171,13 +173,24 @@ export default function PollVotePage() {
 
     const voteCounts: Record<string, number> = {};
     const votersByOption: Record<string, string[]> = {};
-    votes.forEach((v: { option_id: string | null; voter_name: string | null }) => {
+    const unavailableNames: string[] = [];
+    let unavailableVotes = 0;
+
+    votes.forEach((v: { option_id: string | null; voter_name: string | null; is_not_available: boolean | null }) => {
+      if (v.is_not_available) {
+        unavailableVotes += 1;
+        if (v.voter_name) unavailableNames.push(v.voter_name);
+      }
+
       if (v.option_id) {
         voteCounts[v.option_id] = (voteCounts[v.option_id] || 0) + 1;
         if (!votersByOption[v.option_id]) votersByOption[v.option_id] = [];
         if (v.voter_name) votersByOption[v.option_id].push(v.voter_name);
       }
     });
+
+    setNotAvailableCount(unavailableVotes);
+    setNotAvailableVoterNames(unavailableNames);
 
     const resultsData: VoteResult[] = (optionsData || []).map(opt => ({
       optionId: opt.id,
@@ -447,6 +460,23 @@ export default function PollVotePage() {
   const handleModifyVote = async () => {
     if (!poll) return;
     if (!currentUser && !anonymousFingerprint) return;
+
+    setNameError(false);
+    setSelectionError(false);
+
+    let hasErrors = false;
+
+    if (poll.require_name && !voterName.trim()) {
+      setNameError(true);
+      hasErrors = true;
+    }
+
+    if (selectedOptions.length === 0 && !notAvailable) {
+      setSelectionError(true);
+      hasErrors = true;
+    }
+
+    if (hasErrors) return;
     
     setSubmitting(true);
     const supabase = createClient();
@@ -515,6 +545,7 @@ export default function PollVotePage() {
 
       if (voteError) throw new Error(voteError.message);
 
+      setHasVoted(true);
       setIsEditing(false);
       toast.success(t('poll.vote.voteModified') || 'Vote modified');
       await fetchPollData();
@@ -904,6 +935,27 @@ export default function PollVotePage() {
                           </div>
                         );
                       })}
+                      {poll.poll_type === 'calendar' && notAvailableCount > 0 && (
+                        <div className="rounded-lg border border-orange-500/30 bg-orange-500/10 p-3 space-y-2">
+                          <p className="text-sm font-medium text-orange-700">
+                            {t('poll.vote.notAvailableShort')} ({notAvailableCount})
+                          </p>
+                          {notAvailableVoterNames.length > 0 ? (
+                            <div className="flex flex-wrap gap-1.5">
+                              {notAvailableVoterNames.map((name, idx) => (
+                                <span
+                                  key={`${name}-${idx}`}
+                                  className="inline-flex items-center rounded-full bg-orange-500/20 px-2.5 py-0.5 text-xs font-medium text-orange-700"
+                                >
+                                  {name}
+                                </span>
+                              ))}
+                            </div>
+                          ) : (
+                            <p className="text-xs text-muted-foreground">{t('poll.results.hiddenVoters')}</p>
+                          )}
+                        </div>
+                      )}
                     </CollapsibleContent>
                   </Collapsible>
                 </div>
@@ -981,6 +1033,27 @@ export default function PollVotePage() {
                           </div>
                         );
                       })}
+                      {poll.poll_type === 'calendar' && notAvailableCount > 0 && (
+                        <div className="rounded-lg border border-orange-500/30 bg-orange-500/10 p-3 space-y-2">
+                          <p className="text-sm font-medium text-orange-700">
+                            {t('poll.vote.notAvailableShort')} ({notAvailableCount})
+                          </p>
+                          {notAvailableVoterNames.length > 0 ? (
+                            <div className="flex flex-wrap gap-1.5">
+                              {notAvailableVoterNames.map((name, idx) => (
+                                <span
+                                  key={`${name}-${idx}`}
+                                  className="inline-flex items-center rounded-full bg-orange-500/20 px-2.5 py-0.5 text-xs font-medium text-orange-700"
+                                >
+                                  {name}
+                                </span>
+                              ))}
+                            </div>
+                          ) : (
+                            <p className="text-xs text-muted-foreground">{t('poll.results.hiddenVoters')}</p>
+                          )}
+                        </div>
+                      )}
                     </CollapsibleContent>
                   </Collapsible>
                 </div>
@@ -1031,7 +1104,17 @@ export default function PollVotePage() {
                 <div className="flex w-full gap-3">
                   <Button 
                     variant="outline"
-                    onClick={() => setIsEditing(true)} 
+                    onClick={() => {
+                      setIsEditing(true);
+                      setSelectionError(false);
+                      setNameError(false);
+                      setSelectedOptions(
+                        userVotes
+                          .map(v => v.option_id)
+                          .filter((id): id is string => id !== null)
+                      );
+                      setNotAvailable(userVotes.some(v => v.is_not_available));
+                    }} 
                     className="flex-1"
                     disabled={submitting}
                   >
@@ -1061,11 +1144,14 @@ export default function PollVotePage() {
                     variant="outline"
                     onClick={() => {
                       setIsEditing(false);
+                      setSelectionError(false);
+                      setNameError(false);
                       setSelectedOptions(
                         userVotes
                           .map(v => v.option_id)
                           .filter((id): id is string => id !== null)
                       );
+                      setNotAvailable(userVotes.some(v => v.is_not_available));
                     }}
                     className="flex-1"
                   >
@@ -1074,7 +1160,7 @@ export default function PollVotePage() {
                   <Button 
                     onClick={handleModifyVote}
                     className="flex-1"
-                    disabled={submitting || selectedOptions.length === 0}
+                    disabled={submitting || (!notAvailable && selectedOptions.length === 0)}
                   >
                     {submitting ? (
                       <>

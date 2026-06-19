@@ -220,6 +220,7 @@ export class PollsService {
       optionId: data.option_id,
       userId: data.user_id,
       voterName: data.voter_name,
+      isNotAvailable: data.is_not_available,
       createdAt: data.created_at,
     };
   }

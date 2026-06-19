@@ -248,7 +248,7 @@ export default function DashboardPage() {
       <Header />
 
       <main className="flex-1 py-12">
-        <div className="container mx-auto px-4">
+        <div className="w-full max-w-7xl px-4 md:px-8">
           {/* Header */}
           <div className="mb-8 flex items-center justify-between">
             <div>

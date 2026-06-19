@@ -244,8 +244,8 @@ export default function CreatePollPage() {
       <Header />
 
       <main className="flex-1 py-12">
-        <div className="container mx-auto max-w-2xl px-4">
-          <div className="mb-8 text-center">
+        <div className="w-full max-w-5xl px-4 md:px-8">
+          <div className="mb-8 text-left">
             <h1 className="text-3xl font-bold">{t('title')}</h1>
           </div>
 

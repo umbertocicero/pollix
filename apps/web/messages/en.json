@@ -131,7 +131,8 @@
       "viewResults": "View Results",
       "hideResults": "Hide Results",
       "export": "Export Results",
-      "clickToExpand": "click to see who voted"
+      "clickToExpand": "click to see who voted",
+      "hiddenVoters": "Names unavailable"
     },
     "share": {
       "title": "Share Poll",
