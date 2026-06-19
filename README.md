@@ -381,6 +381,53 @@ railway up
 
 ## 📚 API Reference
 
+---
+
+## 🔎 SEO e Google Search Console
+
+Questa sezione spiega cosa configurare per rendere il sito indicizzabile e verificabile da Google (Search Console, Sitemap, robots, Google Analytics). Attenzione: il repository è pubblico — non inserire mai chiavi o segreti nel codice.
+
+1) Variabili d'ambiente richieste
+- `NEXT_PUBLIC_APP_URL` — URL pubblico della tua app (es. `https://planora-poll.vercel.app`). Usata nei metadata, sitemap e schema.
+- `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` — stringa di verifica (se usi il meta tag per Search Console). Non è un segreto sensibile, ma gestiscila come variabile d'ambiente.
+- `NEXT_PUBLIC_GOOGLE_ANALYTICS_ID` — ID di Google Analytics (es. `G-XXXXXXXXXX`) per lo snippet `gtag.js`.
+
+2) Verifica sito su Google Search Console
+- Metodo file HTML (consigliato semplice): copiare il file di verifica `google<id>.html` nella cartella `apps/web/public/` e deployare. Google cercherà `https://TUO_DOMINIO/google<id>.html`.
+- Metodo meta tag: impostare `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` e deployare — il progetto aggiunge automaticamente la meta `verification.google` nei metadata.
+- Metodo Google Analytics: se il sito è collegato a una proprietà GA con permessi di modifica, puoi usare il metodo "Google Analytics".
+- Metodo DNS: aggiungi il record TXT richiesto presso il tuo DNS.
+
+3) robots.txt e sitemap
+- Il file pubblico è `apps/web/public/robots.txt` e contiene la direttiva `Sitemap: https://planora-poll.vercel.app/sitemap.xml` per impostazione predefinita.
+- Se il tuo dominio è diverso, assicurati che `NEXT_PUBLIC_APP_URL` sia impostato sul dominio corretto prima del deploy, oppure modifica `apps/web/public/robots.txt` di conseguenza.
+- Dopo il deploy, controlla:
+   - `https://TUO_DOMINIO/robots.txt`
+   - `https://TUO_DOMINIO/sitemap.xml`
+
+4) Google Analytics (verifica e raccolta dati)
+- Aggiungi `NEXT_PUBLIC_GOOGLE_ANALYTICS_ID` nelle env di Vercel; il progetto include lo snippet `gtag.js` automaticamente se la variabile è impostata.
+- Per usare il metodo "Google Analytics" in Search Console devi avere i permessi di modifica sulla proprietà GA.
+
+5) Istruzioni veloci per test locale e deploy
+- Localmente puoi controllare che tutto sia presente eseguendo:
+   ```bash
+   pnpm dev
+   # poi apri http://localhost:3000/robots.txt e http://localhost:3000/sitemap.xml
+   ```
+- Dopo il deploy, apri `https://TUO_DOMINIO/` e verifica:
+   - presenza del meta tag di verifica (se usi il metodo tag)
+   - presenza del file `google<id>.html` alla root (se usi il metodo file)
+   - presenza dello snippet `gtag/js?id=...` nel `<head>` (se hai impostato GA)
+
+6) Nota importante per fork pubblici
+- Questo repository è pubblico: chiunque può forkare la repo. Non mettere mai chiavi segrete o credenziali nel sorgente.
+- Quando fai fork e deploy su Vercel / altro, configura le variabili d'ambiente nel pannello del progetto (Settings → Environment Variables). Non commitare `.env.local` nel fork.
+- Se vuoi che altri verifichino il loro deployment con Google Search Console, devono usare il loro dominio di deploy (es. `https://nome-fork.vercel.app`) e ripetere la procedura di verifica (file HTML o meta tag o DNS) per il loro dominio.
+
+Se vuoi, posso generare una checklist passo-passo personalizzata per il tuo dominio e aiutarti a verificare i file dopo il deploy.
+
+
 ### Endpoints Principali
 
 #### Polls
@@ -493,6 +540,7 @@ I contributi sono benvenuti!
 - [x] Multilingua IT/EN con rilevamento automatico browser
 - [x] Dark mode
 - [x] SEO Google
+- [x] Google Analytics
 
 ### v1.1 (In Sviluppo) 🚧
 - [ ] Flag per aggiungere possibilibà di scelta di votare la non disponibilità in una data
