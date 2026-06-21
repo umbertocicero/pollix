@@ -103,6 +103,35 @@ The UI has a pixel/Minecraft aesthetic with no border-radius anywhere (`border-r
 
 When adding new UI components, follow the MC aesthetic: use mc-raised/mc-inset borders, avoid rounded corners, prefer the pixel font utilities.
 
+## Animations
+
+### Background scene — `apps/web/components/mc-background.tsx`
+
+A layered SVG landscape animated entirely with **SVG SMIL** (`<animate>` / `<animateTransform>`). Zero JS per frame. The theme (day vs. night) is read from `next-themes` `resolvedTheme` on mount and all colours are recalculated.
+
+Depth layers back-to-front: sky gradient → aurora (night) → stars (night) → shooting stars (night) → moon/sun → drifting clouds → birds (day) → far hills → mid hills → near hills + grass steps → lake with shimmer → foreground trees (sway) → flowers (day) / fireflies (night) → floating motes → background chicken.
+
+Key implementation details:
+- **Clouds**: two copies of the same `<CloudCluster>` side-by-side, animated together with a single `translateX` from `0` to `-480` in a seamless infinite loop
+- **Trees**: each canopy has an independent `animateTransform type="rotate"` with staggered `begin` offsets so they don't sway in sync
+- **Aurora**: 28 bars rendered from a computed array; each has its own opacity + height `<animate>` with different `dur` and `begin`, plus a shared slow `translateX` sway on the parent `<g>`
+- **Background chicken**: follows the hill surface via a 10-point `animateTransform type="translate"` path; direction flip is a separate `animateTransform type="scale"` with `calcMode="discrete"` switching at the 50% keyframe
+
+### Walking chicken widget — `apps/web/components/walking-chicken.tsx`
+
+Interactive chicken placed at `absolute bottom-full` of any `position: relative` parent card. Combines CSS animations and SVG SMIL:
+
+| Motion | Mechanism |
+|--------|-----------|
+| Horizontal walk | CSS `transform: translateX` on `.mc-chicken-pos` (full-width absolute wrapper). Uses `transform` not `left` — GPU-composited, works on iOS Safari. `calc(100% - 34px)` resolves to parent card width because `.mc-chicken-pos` has `width: 100%`. |
+| Direction flip | CSS `scaleX(-1)` on `.mc-chicken-flip` at the 50% keyframe |
+| Leg steps | SVG SMIL `animateTransform type="rotate"` — two legs in opposite phase at 0.8 s. SMIL allows JS `svg.pauseAnimations()` to freeze legs independently of CSS. |
+| Hover pause | `onPointerEnter/Leave` filtered to `pointerType === 'mouse'` → `hovered = true` → `is-paused` class → CSS `animation-play-state: paused` + `svg.pauseAnimations()`. Touch taps are intentionally excluded so mobile scroll never freezes the chicken. |
+| Tap reaction | `onClick` → `poke()` → `startled = true` for 1 s → CSS keyframes: `mc-hop` (body), `mc-neck` (head), `mc-wing-f/b` (wings), `mc-fly-a…e` (feather pixels) |
+| Reduced motion | `@media (prefers-reduced-motion: reduce)` sets `animation: none` on `.mc-chicken-pos`, `.mc-chicken-flip`, `.mc-chicken-head`. SMIL leg steps are unaffected. |
+
+When adding the chicken to a new page, the parent element must have `position: relative` and a defined width for `calc(100% - 34px)` to resolve correctly.
+
 ## Deployment
 
 - **Frontend**: Vercel, root directory `apps/web`
