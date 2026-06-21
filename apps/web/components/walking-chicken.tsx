@@ -61,8 +61,8 @@ export function WalkingChicken({ duration = 30, size = 32, className = '' }: Pro
         <button
           type="button"
           onClick={poke}
-          onMouseEnter={() => setHovered(true)}
-          onMouseLeave={() => setHovered(false)}
+          onPointerEnter={(e) => { if (e.pointerType === 'mouse') setHovered(true); }}
+          onPointerLeave={(e) => { if (e.pointerType === 'mouse') setHovered(false); }}
           aria-label="chicken"
           className={`mc-chicken-body block cursor-pointer border-0 bg-transparent p-0 ${startled ? 'is-startled' : ''}`}
           style={{ height: size, lineHeight: 0 }}
