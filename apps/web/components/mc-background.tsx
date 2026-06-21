@@ -360,9 +360,9 @@ export function McBackground({ className = '' }: { className?: string }) {
 
         <rect width="480" height="270" fill="url(#mcSkyGrad)" />
 
-        {/* ── Aurora borealis (night) ── */}
+        {/* ── Aurora borealis (night) — hidden on mobile for performance ── */}
         {night && (
-          <g>
+          <g className="hidden sm:block">
             {auroraBars.map((b) => (
               <rect
                 key={`au${b.key}`}
@@ -423,9 +423,10 @@ export function McBackground({ className = '' }: { className?: string }) {
             </rect>
           ))}
 
-        {/* ── Shooting stars (night) ── */}
-        {night &&
-          SHOOTING_STARS.map((st, i) => {
+        {/* ── Shooting stars (night) — hidden on mobile ── */}
+        {night && (
+          <g className="hidden sm:block">
+            {SHOOTING_STARS.map((st, i) => {
             const activeFrac = st.len / (Math.hypot(st.dx, st.dy) + st.len);
             return (
               <g key={`sh${i}`}>
@@ -454,7 +455,9 @@ export function McBackground({ className = '' }: { className?: string }) {
                 </g>
               </g>
             );
-          })}
+            })}
+          </g>
+        )}
 
         {/* ── Moon / Sun with pulsing glow ── */}
         {night ? (
@@ -615,34 +618,36 @@ export function McBackground({ className = '' }: { className?: string }) {
             <rect key={`fl${i}`} x={f.x} y={f.y} width={3} height={3} fill={f.c} />
           ))}
 
-        {/* ── Floating motes (embers at night / pollen by day) ── */}
-        {motes.map((m) => (
-          <rect
-            key={`mote${m.key}`}
-            x={m.x}
-            y={m.y}
-            width={m.s}
-            height={m.s}
-            fill={night ? '#FFCC66' : '#FFFFFF'}
-            opacity={0}
-          >
-            <animate
-              attributeName="opacity"
-              values="0;0.7;0"
-              dur={`${m.dur}s`}
-              begin={`${m.begin}s`}
-              repeatCount="indefinite"
-            />
-            <animateTransform
-              attributeName="transform"
-              type="translate"
-              values={`0 0; ${m.drift} -26; 0 -52`}
-              dur={`${m.dur}s`}
-              begin={`${m.begin}s`}
-              repeatCount="indefinite"
-            />
-          </rect>
-        ))}
+        {/* ── Floating motes (embers at night / pollen by day) — hidden on mobile ── */}
+        <g className="hidden sm:block">
+          {motes.map((m) => (
+            <rect
+              key={`mote${m.key}`}
+              x={m.x}
+              y={m.y}
+              width={m.s}
+              height={m.s}
+              fill={night ? '#FFCC66' : '#FFFFFF'}
+              opacity={0}
+            >
+              <animate
+                attributeName="opacity"
+                values="0;0.7;0"
+                dur={`${m.dur}s`}
+                begin={`${m.begin}s`}
+                repeatCount="indefinite"
+              />
+              <animateTransform
+                attributeName="transform"
+                type="translate"
+                values={`0 0; ${m.drift} -26; 0 -52`}
+                dur={`${m.dur}s`}
+                begin={`${m.begin}s`}
+                repeatCount="indefinite"
+              />
+            </rect>
+          ))}
+        </g>
 
         {/* ── Fireflies (night) — drift + glow ── */}
         {night &&

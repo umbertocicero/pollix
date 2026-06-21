@@ -21,28 +21,29 @@ export default function HomePage() {
         <main className="flex-1">
 
           {/* ── HERO ──────────────────────────────────────────────── */}
-          <section className="relative overflow-hidden py-24 sm:py-36">
-            {/* Overlay for text readability */}
-            <div className="absolute inset-0 bg-black/25 z-0" />
+          <section className="relative overflow-hidden py-16 sm:py-28 lg:py-36">
+            {/* Readability scrim — a touch darker on mobile where text
+                overlaps more of the scene */}
+            <div className="absolute inset-0 bg-black/40 sm:bg-black/25 z-0" />
 
             <div className="container relative z-10 mx-auto px-4">
             <div className="mx-auto max-w-3xl text-center">
               {/* Main title in Press Start 2P */}
-              <h1 className="mc-title text-xl sm:text-2xl lg:text-3xl text-[#FCEE4B] mb-6 px-2">
+              <h1 className="mc-title text-lg sm:text-2xl lg:text-3xl text-[#FCEE4B] mb-4 sm:mb-6 px-1 sm:px-2 leading-snug">
                 {t('home.hero.title')}
               </h1>
 
               {/* Subtitle */}
-              <p className="mt-4 text-base sm:text-lg text-white/90 font-pixel max-w-xl mx-auto leading-7">
+              <p className="mt-3 sm:mt-4 text-sm sm:text-lg text-white/90 font-pixel max-w-xl mx-auto leading-6 sm:leading-7">
                 {t('home.hero.subtitle')}
               </p>
 
               {/* CTA Button */}
-              <div className="mt-12 flex justify-center">
+              <div className="mt-8 sm:mt-12 flex justify-center">
                 <Button
                   asChild
                   size="lg"
-                  className="font-press text-xs px-8 py-4 h-auto bg-[#3DCC4A] text-[#0A1E0D]"
+                  className="font-press text-[10px] sm:text-xs px-6 sm:px-8 py-4 h-auto bg-[#3DCC4A] text-[#0A1E0D]"
                 >
                   <Link href="/polls/create">{t('home.hero.cta')}</Link>
                 </Button>
@@ -53,11 +54,11 @@ export default function HomePage() {
         </section>
 
         {/* ── FEATURES — inventory slots ─────────────────────────── */}
-        <section id="features" className="py-20 bg-[#D0D0D0]/95 dark:bg-[#2A2A2A]/95 backdrop-blur-sm">
+        <section id="features" className="py-14 sm:py-20 bg-[#D0D0D0]/95 dark:bg-[#2A2A2A]/95 backdrop-blur-sm">
           <div className="container mx-auto px-4">
 
             {/* Section heading */}
-            <div className="mx-auto max-w-xl text-center mb-16">
+            <div className="mx-auto max-w-xl text-center mb-10 sm:mb-16">
               <h2 className="font-press text-base sm:text-lg text-[#1E1E1E] dark:text-[#FCEE4B]">
                 {t('home.features.title')}
               </h2>
@@ -71,7 +72,7 @@ export default function HomePage() {
               {/* Slot 1 — Single Choice */}
               <FeatureCard href="/polls/create?type=single_choice">
                 <div
-                  className="mc-slot w-16 h-16 flex items-center justify-center mb-6"
+                  className="mc-slot w-16 h-16 flex items-center justify-center mb-4 sm:mb-6"
                 >
                   <CheckCircle2 className="h-8 w-8 text-[#3DCC4A]" />
                 </div>
@@ -86,7 +87,7 @@ export default function HomePage() {
               {/* Slot 2 — Multiple Choice */}
               <FeatureCard href="/polls/create?type=multiple_choice">
                 <div
-                  className="mc-slot w-16 h-16 flex items-center justify-center mb-6"
+                  className="mc-slot w-16 h-16 flex items-center justify-center mb-4 sm:mb-6"
                 >
                   <ListChecks className="h-8 w-8 text-[#FCEE4B]" />
                 </div>
@@ -101,7 +102,7 @@ export default function HomePage() {
               {/* Slot 3 — Calendar */}
               <FeatureCard href="/polls/create?type=calendar">
                 <div
-                  className="mc-slot w-16 h-16 flex items-center justify-center mb-6"
+                  className="mc-slot w-16 h-16 flex items-center justify-center mb-4 sm:mb-6"
                 >
                   <Calendar className="h-8 w-8 text-[#5DEFEA]" />
                 </div>
@@ -118,17 +119,17 @@ export default function HomePage() {
         </section>
 
         {/* ── HOW IT WORKS — crafting steps ─────────────────────── */}
-        <section className="py-20 bg-[#C6C6C6]/95 dark:bg-[#1E1E1E]/95 backdrop-blur-sm">
+        <section className="py-14 sm:py-20 bg-[#C6C6C6]/95 dark:bg-[#1E1E1E]/95 backdrop-blur-sm">
           <div className="container mx-auto px-4">
 
-            <div className="mx-auto max-w-2xl text-center mb-16">
+            <div className="mx-auto max-w-2xl text-center mb-10 sm:mb-16">
               <h2 className="font-press text-base sm:text-lg text-[#1E1E1E] dark:text-white">
                 {t('home.howItWorks.title')}
               </h2>
               <div className="mt-4 mx-auto h-1 w-24 bg-[#9C6B30]" />
             </div>
 
-            <div className="mx-auto max-w-4xl grid grid-cols-1 gap-10 md:grid-cols-3">
+            <div className="mx-auto max-w-4xl grid grid-cols-1 gap-8 sm:gap-10 md:grid-cols-3">
 
               {/* Step 1 */}
               <div className="flex flex-col items-center text-center">
@@ -193,7 +194,7 @@ export default function HomePage() {
             </div>
 
             {/* Final CTA */}
-            <div className="mt-16 flex justify-center">
+            <div className="mt-10 sm:mt-16 flex justify-center">
               <Button
                 asChild
                 size="lg"

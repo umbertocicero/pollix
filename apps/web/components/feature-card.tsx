@@ -29,7 +29,7 @@ export function FeatureCard({ href, children }: FeatureCardProps) {
       <a
         href={href}
         onClick={handleClick}
-        className="mc-panel mc-btn p-8 block no-underline bg-[#E0E0E0] dark:bg-[#3B3B3B] cursor-pointer"
+        className="mc-panel mc-btn p-6 sm:p-8 block no-underline bg-[#E0E0E0] dark:bg-[#3B3B3B] cursor-pointer"
       >
         {children}
       </a>
