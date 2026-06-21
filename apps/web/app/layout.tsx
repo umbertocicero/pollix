@@ -7,14 +7,14 @@ import { ThemeProvider } from '@/components/providers/theme-provider';
 import { Toaster } from '@/components/ui/sonner';
 import './globals.css';
 
-const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://planora-poll.vercel.app';
+const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.pollix.it';
 
 export const metadata: Metadata = {
-  title: 'Planora - Simple polls for better decisions',
+  title: 'Pollix - Simple polls for better decisions',
   description:
     'Create polls and schedule meetings in minutes. Participants can vote without registration.',
   keywords: ['polls', 'scheduling', 'meetings', 'voting', 'availability', 'survey', 'decision making'],
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://planora-poll.vercel.app'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://www.pollix.it'),
   icons: {
     icon: '/icon',
     apple: '/apple-icon',
@@ -24,17 +24,17 @@ export const metadata: Metadata = {
     google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || '',
   },
   openGraph: {
-    title: 'Planora - Simple polls for better decisions',
+    title: 'Pollix - Simple polls for better decisions',
     description: 'Create polls, schedule meetings, and collect availability in minutes.',
     type: 'website',
-    siteName: 'Planora',
+    siteName: 'Pollix',
     images: ['/opengraph-image.png'],
-    url: 'https://planora-poll.vercel.app',
+    url: 'https://www.pollix.it',
     locale: 'en_US',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Planora - Simple polls for better decisions',
+    title: 'Pollix - Simple polls for better decisions',
     description: 'Create polls, schedule meetings, and collect availability in minutes.',
     images: ['/opengraph-image.png'],
   },
@@ -46,7 +46,7 @@ export const metadata: Metadata = {
     'max-video-preview': -1,
   },
   alternates: {
-    canonical: 'https://planora-poll.vercel.app',
+    canonical: 'https://www.pollix.it',
   },
 };
 
@@ -87,7 +87,7 @@ export default async function RootLayout({
             __html: JSON.stringify({
               '@context': 'https://schema.org',
               '@type': 'SoftwareApplication',
-              name: 'Planora',
+              name: 'Pollix',
               description: schemaDescription,
               url: appUrl,
               applicationCategory: 'BusinessApplication',

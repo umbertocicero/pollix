@@ -21,7 +21,7 @@ export function Footer() {
             >
               P
             </div>
-            <span className="font-press text-xs text-[#5D8A3A] dark:text-[#FCEE4B]">Planora</span>
+            <span className="font-press text-xs text-[#5D8A3A] dark:text-[#FCEE4B]">Pollix</span>
           </Link>
 
           <nav className="flex flex-wrap items-center justify-center gap-6">

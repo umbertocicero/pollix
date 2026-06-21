@@ -1,6 +1,6 @@
 {
   "common": {
-    "appName": "Planora",
+    "appName": "Pollix",
     "loading": "Loading...",
     "error": "An error occurred",
     "save": "Save",
@@ -285,7 +285,7 @@
     },
     "signup": {
       "title": "Create an account",
-      "subtitle": "Get started with Planora",
+      "subtitle": "Get started with Pollix",
       "name": "Full Name",
       "email": "Email",
       "password": "Password",
@@ -305,7 +305,7 @@
     "confirm": {
       "title": "Check your email",
       "description": "We've sent you a confirmation link to complete your registration.",
-      "instructions": "Click the link in the email to activate your account and start using Planora.",
+      "instructions": "Click the link in the email to activate your account and start using Pollix.",
       "spam": "Can't find the email? Check your spam folder.",
       "backToLogin": "Back to login"
     },

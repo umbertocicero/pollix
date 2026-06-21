@@ -1,6 +1,6 @@
-# 🗳️ Planora
+# 🗳️ Pollix
 
-**Planora** è una piattaforma web collaborativa per creare e gestire sondaggi, votazioni e pianificazione di eventi. Semplifica l'organizzazione di riunioni, decisioni di team e raccolta disponibilità.
+**Pollix** è una piattaforma web collaborativa per creare e gestire sondaggi, votazioni e pianificazione di eventi. Semplifica l'organizzazione di riunioni, decisioni di team e raccolta disponibilità.
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/umbertocicero/planora)
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/umbertocicero/planora)
@@ -53,7 +53,7 @@
 
 ## 🎬 Live
 
-> 🌍 Online disponibile su: [planora-poll.vercel.app](https://planora-poll.vercel.app/)
+> 🌍 Online disponibile su: [www.pollix.it](https://www.pollix.it/)
 
 ### Screenshot
 
@@ -389,7 +389,7 @@ railway up
 Questa sezione descrive come verificare il sito su Google Search Console, quale metodo scegliere e come gestire Analytics/Tag Manager e il banner di consenso (CookieYes).
 
 **Varibili d'ambiente rilevanti**
-- `NEXT_PUBLIC_APP_URL`: URL pubblico dell'app (es. https://planora-poll.vercel.app). Usata per sitemap/metadata.
+- `NEXT_PUBLIC_APP_URL`: URL pubblico dell'app (es. https://www.pollix.it). Usata per sitemap/metadata.
 - `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION`: stringa di verifica usata dal meta tag (opzionale).
 - `NEXT_PUBLIC_GTM_ID`: ID Google Tag Manager (es. `GTM-XXXXXXX`). Se presente, il layout carica GTM automaticamente.
 - `NEXT_PUBLIC_COOKIEYES_ID`: ID CookieYes per il banner di consenso (opzionale).
@@ -420,7 +420,7 @@ Se hai bisogno, posso aggiornare le istruzioni di deploy su Vercel o aggiungere 
 - Metodo DNS: aggiungi il record TXT richiesto dal provider DNS.
 
 3) robots.txt e sitemap
-- Il file pubblico è `apps/web/public/robots.txt` e contiene la direttiva `Sitemap: https://planora-poll.vercel.app/sitemap.xml` per impostazione predefinita.
+- Il file pubblico è `apps/web/public/robots.txt` e contiene la direttiva `Sitemap: https://www.pollix.it/sitemap.xml` per impostazione predefinita.
 - Se il dominio reale è diverso, imposta `NEXT_PUBLIC_APP_URL` sul dominio corretto e/o aggiorna `apps/web/public/robots.txt` di conseguenza.
 - Dopo il deploy, controlla:
    - `https://TUO_DOMINIO/robots.txt`

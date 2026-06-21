@@ -74,7 +74,7 @@ export function Header() {
             >
               P
             </div>
-            <span className="font-press text-sm text-[#5D8A3A] dark:text-[#FCEE4B] hidden sm:block">Planora</span>
+            <span className="font-press text-sm text-[#5D8A3A] dark:text-[#FCEE4B] hidden sm:block">Pollix</span>
           </Link>
 
           <div className="hidden items-center gap-5 md:flex">

@@ -2,8 +2,8 @@ import type { MetadataRoute } from 'next';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'Planora',
-    short_name: 'Planora',
+    name: 'Pollix',
+    short_name: 'Pollix',
     description: 'Create polls, schedule meetings, and collect availability in minutes.',
     start_url: '/',
     display: 'standalone',

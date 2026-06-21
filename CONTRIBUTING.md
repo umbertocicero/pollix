@@ -1,6 +1,6 @@
-# Contribuire a Planora
+# Contribuire a Pollix
 
-Grazie per il tuo interesse nel contribuire a Planora! 🎉
+Grazie per il tuo interesse nel contribuire a Pollix! 🎉
 
 ## 🚀 Quick Start
 
