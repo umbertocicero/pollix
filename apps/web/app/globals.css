@@ -167,7 +167,7 @@
 
 /* ─────────────────────────────────────────────────────────────
    Walking chicken decoration (paces the top edge of a card).
-   Stroll + facing flip are CSS; legs are SMIL (inside the SVG).
+   Horizontal walk + facing flip are rAF (JS); legs are SMIL.
    Tap/hover triggers a ~1s "startled" reaction.
    ───────────────────────────────────────────────────────────── */
 
@@ -175,21 +175,11 @@
   position: absolute;
   left: 0;
   width: 100%;
-  animation: mc-chk-walk var(--chk-dur, 14s) linear infinite;
+  /* horizontal position driven by requestAnimationFrame in walking-chicken.tsx */
 }
 .mc-chicken-flip {
   transform-origin: 50% 100%;
-  animation: mc-chk-face var(--chk-dur, 14s) linear infinite;
-}
-
-@keyframes mc-chk-walk {
-  0%   { transform: translateX(4px); }
-  50%  { transform: translateX(calc(100% - 34px)); }
-  100% { transform: translateX(4px); }
-}
-@keyframes mc-chk-face {
-  0%, 49.9% { transform: scaleX(1); }
-  50%, 100% { transform: scaleX(-1); }
+  /* direction flip driven by requestAnimationFrame in walking-chicken.tsx */
 }
 
 /* feathers hidden during normal walking */
@@ -264,12 +254,8 @@
   100% { opacity: 0; transform: translate(4px, -24px) rotate(90deg); }
 }
 
-/* hover (or the startled moment) freezes the stroll; the SMIL legs are
-   frozen from JS via pauseAnimations(). */
-.mc-chicken-walker.is-paused .mc-chicken-pos,
-.mc-chicken-walker.is-paused .mc-chicken-flip {
-  animation-play-state: paused;
-}
+/* hover (or the startled moment) freezes the stroll; rAF loop is cancelled
+   from JS and SMIL legs are frozen via pauseAnimations(). */
 
 /* idle "breathing": the head gently bobs and tilts so the bird looks alive
    even when standing still (on hover). Runs always; the startle neck-stretch
@@ -293,8 +279,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .mc-chicken-pos,
-  .mc-chicken-flip,
+  /* rAF walk is skipped in JS when prefers-reduced-motion is set */
   .mc-chicken-head {
     animation: none;
   }

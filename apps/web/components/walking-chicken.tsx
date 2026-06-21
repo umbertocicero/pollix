@@ -3,8 +3,9 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
 
 /* A small Minecraft chicken that slowly paces the top edge of its
-   (position: relative) parent. Stroll, facing flip and leg steps are all CSS
-   so they can be paused together.
+   (position: relative) parent. Horizontal walk uses requestAnimationFrame
+   so iOS Safari never throttles it (CSS animations on position:absolute
+   elements outside parent bounds are suspended on iOS).
    - hover  → it stops walking (stands still)
    - click / touch → a short (~1s) "startled" reaction: it hops, stretches its
      neck, flares its wings and puffs off a few feathers, then resumes.
@@ -34,16 +35,21 @@ export function WalkingChicken({ duration = 30, size = 32, className = '' }: Pro
   const [startled, setStartled] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
+  const posRef = useRef<HTMLDivElement>(null);
+  const flipRef = useRef<HTMLDivElement>(null);
+  const rafRef = useRef<number>(0);
+  const elapsedRef = useRef<number>(0);
+  const lastTsRef = useRef<number | null>(null);
 
   const poke = () => {
     setStartled(true);
     if (timer.current) clearTimeout(timer.current);
-    timer.current = setTimeout(() => setStartled(false), 1000); // max ~1s
+    timer.current = setTimeout(() => setStartled(false), 1000);
   };
 
   const paused = hovered || startled;
 
-  // Freeze/resume the SMIL leg steps in sync with the CSS stroll.
+  // Freeze/resume the SMIL leg steps in sync with the walk.
   useEffect(() => {
     const svg = svgRef.current;
     if (!svg) return;
@@ -51,14 +57,56 @@ export function WalkingChicken({ duration = 30, size = 32, className = '' }: Pro
     else svg.unpauseAnimations();
   }, [paused]);
 
+  // rAF-driven horizontal walk — works on iOS Safari unlike CSS animations
+  // on position:absolute elements placed outside parent bounds (bottom:100%).
+  useEffect(() => {
+    if (paused) {
+      lastTsRef.current = null;
+      cancelAnimationFrame(rafRef.current);
+      return;
+    }
+
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reducedMotion) return;
+
+    const durationMs = duration * 1000;
+
+    const step = (ts: number) => {
+      if (lastTsRef.current !== null) {
+        elapsedRef.current += ts - lastTsRef.current;
+      }
+      lastTsRef.current = ts;
+
+      const pos = posRef.current;
+      const flip = flipRef.current;
+      if (pos && flip) {
+        const parentW = pos.parentElement?.clientWidth ?? 300;
+        // ping-pong: 0→1 first half, 1→0 second half
+        const t = (elapsedRef.current % durationMs) / durationMs;
+        const pingpong = t < 0.5 ? t * 2 : 2 - t * 2;
+        const x = 4 + pingpong * (parentW - 38);
+        pos.style.transform = `translateX(${x}px)`;
+        flip.style.transform = t < 0.5 ? 'scaleX(1)' : 'scaleX(-1)';
+      }
+
+      rafRef.current = requestAnimationFrame(step);
+    };
+
+    rafRef.current = requestAnimationFrame(step);
+    return () => {
+      cancelAnimationFrame(rafRef.current);
+      lastTsRef.current = null;
+    };
+  }, [paused, duration]);
+
   return (
     <div
       aria-hidden
       className={`mc-chicken-walker absolute bottom-full left-0 w-full z-10 ${paused ? 'is-paused' : ''} ${className}`}
-      style={{ '--chk-dur': `${duration}s`, height: size } as CSSProperties}
+      style={{ height: size } as CSSProperties}
     >
-      <div className="mc-chicken-pos" style={{ height: size }}>
-        <div className="mc-chicken-flip" style={{ height: size }}>
+      <div ref={posRef} className="mc-chicken-pos" style={{ height: size }}>
+        <div ref={flipRef} className="mc-chicken-flip" style={{ height: size }}>
           <button
             type="button"
             onClick={poke}
