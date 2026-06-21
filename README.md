@@ -1,68 +1,70 @@
 # 🗳️ Pollix
 
-**Pollix** è una piattaforma web collaborativa per creare e gestire sondaggi, votazioni e pianificazione di eventi. Semplifica l'organizzazione di riunioni, decisioni di team e raccolta disponibilità.
+**Pollix** is a collaborative web platform for creating and managing polls, votes, and event scheduling. It simplifies organising meetings, team decisions, and availability collection.
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/umbertocicero/planora)
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/umbertocicero/planora)
 
 ---
 
-## 📋 Indice
+## 📋 Table of Contents
 
-- [Funzionalità](#-funzionalità)
-- [Demo](#-demo)
-- [Tech Stack](#-tech-stack)
-- [Prerequisiti](#-prerequisiti)
-- [Installazione](#-installazione)
-- [Configurazione](#-configurazione)
-- [Sviluppo](#-sviluppo)
-- [Struttura Progetto](#-struttura-progetto)
+- [Features](#-features)
+- [Live](#-live)
+- [Tech Stack](#️-tech-stack)
+- [Prerequisites](#-prerequisites)
+- [Installation](#-installation)
+- [Configuration](#️-configuration)
+- [Development](#-development)
+- [Animations](#-animations)
+- [Project Structure](#-project-structure)
 - [Deploy](#-deploy)
 - [API Reference](#-api-reference)
-- [Contribuire](#-contribuire)
-- [Roadmap](#-roadmap)
-- [Licenza](#-licenza)
+- [Contributing](#-contributing)
+- [Roadmap](#️-roadmap)
+- [License](#-license)
 
 ---
 
-## ✨ Funzionalità
+## ✨ Features
 
-### Tipi di Sondaggio
-| Tipo | Descrizione |
+### Poll Types
+
+| Type | Description |
 |------|-------------|
-| **Scelta Singola** | I partecipanti selezionano una sola opzione |
-| **Scelta Multipla** | Selezione di più opzioni con limiti configurabili |
-| **Calendario** | Raccolta disponibilità con date e fasce orarie |
+| **Single Choice** | Participants select one option |
+| **Multiple Choice** | Select multiple options with configurable limits |
+| **Calendar** | Collect availability with dates and time slots |
 
-### Caratteristiche Principali
-- 🔗 **Link condivisibili** - Condividi via link, QR code, email, WhatsApp
-- 👤 **Votazione guest** - Partecipa senza registrazione
-- 📊 **Risultati real-time** - Aggiornamenti istantanei con Supabase Realtime
-- 💬 **Commenti al voto** - Commento opzionale, attivabile dal creatore
-- 🚫 **Opzione "non disponibile"** - Per i sondaggi calendario, attivabile dal creatore
-- ⚙️ **Pagina account** - Modifica del nome visualizzato (propagato ai voti) ed eliminazione account
-- 🎨 **Tema pixel-art Minecraft** - Sfondo animato giorno/notte (parallasse, aurora, lucciole, pollo che cammina)
-- 🌍 **Multilingua** - Italiano e Inglese
-- 🌙 **Dark mode** - Tema chiaro/scuro automatico
-- 📱 **Mobile-first** - Design responsive ottimizzato
-- 🔒 **Privacy** - Protezione password opzionale
-- 📤 **Export** - Scarica risultati in CSV
+### Highlights
 
-### Dashboard Utente
-- Gestione sondaggi attivi, chiusi e bozze
-- Statistiche di partecipazione
-- Duplicazione e archiviazione sondaggi
+- 🔗 **Shareable links** — share via link, QR code, email, WhatsApp
+- 👤 **Guest voting** — participate without registration
+- 📊 **Real-time results** — instant updates via Supabase Realtime
+- 💬 **Vote comments** — optional per-vote comment, toggled by the creator
+- 🚫 **"Not available" option** — calendar polls support an explicit unavailability response
+- ⚙️ **Account page** — update display name (propagated to votes) and delete account
+- 🎨 **Pixel-art Minecraft theme** — animated day/night background with parallax, aurora, fireflies, and a walking chicken
+- 🌍 **Multilingual** — Italian and English with automatic browser detection
+- 🌙 **Dark mode** — auto light/dark theme
+- 📱 **Mobile-first** — optimised responsive design
+
+### User Dashboard
+
+- Manage active, closed, and draft polls
+- Participation statistics
+- Poll duplication and archiving
 
 ---
 
 ## 🎬 Live
 
-> 🌍 Online disponibile su: [www.pollix.it](https://www.pollix.it/)
+> 🌍 Available at: [www.pollix.it](https://www.pollix.it/)
 
-### Screenshot
+### Screenshots
 
-| Home | Crea Sondaggio | Vota |
-|------|----------------|------|
+| Home | Create Poll | Vote |
+|------|-------------|------|
 | ![Home](docs/screenshots/home.png) | ![Create](docs/screenshots/create.png) | ![Vote](docs/screenshots/vote.png) |
 
 ---
@@ -70,566 +72,399 @@
 ## 🛠️ Tech Stack
 
 ### Frontend
-| Tecnologia | Versione | Descrizione |
-|------------|----------|-------------|
-| [Next.js](https://nextjs.org/) | 14.x | React framework con App Router |
+
+| Technology | Version | Description |
+|------------|---------|-------------|
+| [Next.js](https://nextjs.org/) | 14.x | React framework with App Router |
 | [React](https://react.dev/) | 18.x | UI library |
 | [TailwindCSS](https://tailwindcss.com/) | 3.x | Utility-first CSS |
-| [shadcn/ui](https://ui.shadcn.com/) | latest | Componenti UI accessibili |
-| [next-intl](https://next-intl-docs.vercel.app/) | 3.x | Internazionalizzazione |
-| [React Hook Form](https://react-hook-form.com/) | 7.x | Gestione form |
-| [Zod](https://zod.dev/) | 3.x | Validazione schema |
+| [shadcn/ui](https://ui.shadcn.com/) | latest | Accessible UI components |
+| [next-intl](https://next-intl-docs.vercel.app/) | 3.x | Internationalisation |
+| [React Hook Form](https://react-hook-form.com/) | 7.x | Form management |
+| [Zod](https://zod.dev/) | 3.x | Schema validation |
 
 ### Backend
-| Tecnologia | Versione | Descrizione |
-|------------|----------|-------------|
+
+| Technology | Version | Description |
+|------------|---------|-------------|
 | [NestJS](https://nestjs.com/) | 10.x | Node.js framework |
 | [Supabase](https://supabase.com/) | 2.x | Database + Auth + Realtime |
-| [PostgreSQL](https://www.postgresql.org/) | 15.x | Database relazionale |
+| [PostgreSQL](https://www.postgresql.org/) | 15.x | Relational database |
 
-### Infrastruttura
-| Servizio | Piano | Costo |
-|----------|-------|-------|
-| [Vercel](https://vercel.com/) | Hobby | Gratuito |
-| [Supabase](https://supabase.com/) | Free | Gratuito (500MB) |
-| [GitHub Codespaces](https://github.com/features/codespaces) | Free | 60h/mese |
-| [Resend](https://resend.com/) | Free | 3000 email/mese |
+### Infrastructure
 
-**💰 Costo totale MVP: €0/mese**
+| Service | Plan | Cost |
+|---------|------|------|
+| [Vercel](https://vercel.com/) | Hobby | Free |
+| [Supabase](https://supabase.com/) | Free | Free (500 MB) |
+| [GitHub Codespaces](https://github.com/features/codespaces) | Free | 60 h/month |
+| [Resend](https://resend.com/) | Free | 3,000 emails/month |
+
+**💰 Total MVP cost: €0/month**
 
 ---
 
-## 📋 Prerequisiti
+## 📋 Prerequisites
 
-### Opzione A: GitHub Codespaces (Consigliato) ⭐
-**Nessuna installazione locale richiesta!**
-- Account GitHub
-- Browser moderno
+### Option A: GitHub Codespaces (Recommended) ⭐
 
-### Opzione B: Sviluppo Locale
-- Node.js 18+ 
+No local installation required!
+- GitHub account
+- Modern browser
+
+### Option B: Local Development
+
+- Node.js 18+
 - pnpm 8+
 - Git
 
 ---
 
-## 🚀 Installazione
+## 🚀 Installation
 
-### Metodo 1: GitHub Codespaces (Senza installazioni)
+### Method 1: GitHub Codespaces
 
-1. **Fork o crea il repository**
-   ```
-   https://github.com/umbertocicero/planora
-   ```
+1. **Fork or create the repository**
 
-2. **Apri in Codespaces**
-   - Vai al tuo repository su GitHub
-   - Clicca **Code** → **Codespaces** → **Create codespace on main**
-   - Attendi 2-3 minuti per il setup automatico
+2. **Open in Codespaces**
+   - Go to your repository on GitHub
+   - Click **Code** → **Codespaces** → **Create codespace on main**
+   - Wait 2–3 minutes for automatic setup
 
-3. **Configura le variabili d'ambiente**
+3. **Configure environment variables**
    ```bash
-   # Crea il file .env.local nella cartella apps/web/
    cp .env.example apps/web/.env.local
-   # Poi modifica apps/web/.env.local con le tue credenziali Supabase
+   # Edit apps/web/.env.local with your Supabase credentials
    ```
 
-4. **Avvia l'applicazione**
+4. **Start the application**
    ```bash
    pnpm dev
    ```
 
-### Metodo 2: Installazione Locale
+### Method 2: Local Installation
 
 ```bash
-# 1. Clona il repository
+# Clone the repository
 git clone https://github.com/umbertocicero/planora.git
 cd planora
 
-# 2. Installa pnpm (se non presente)
+# Install pnpm (if not present)
 npm install -g pnpm
 
-# 3. Installa dipendenze
+# Install dependencies
 pnpm install
 
-# 4. Crea le variabili d'ambiente (IMPORTANTE: in apps/web/)
+# Create environment variables (IMPORTANT: inside apps/web/)
 cp .env.example apps/web/.env.local
 
-# 5. Modifica apps/web/.env.local con le tue credenziali Supabase
+# Edit apps/web/.env.local with your Supabase credentials
 
-# 6. Avvia in sviluppo
+# Start in development mode
 pnpm dev
 ```
 
 ---
 
-## ⚙️ Configurazione
+## ⚙️ Configuration
 
-### 1. Configurare Supabase
+### 1. Set up Supabase
 
-1. **Crea account gratuito** su [supabase.com](https://supabase.com)
-
-2. **Crea nuovo progetto**
-   - Nome: `planora`
-   - Password database: (genera una sicura)
-   - Regione: EU West (o più vicina)
-
-3. **Copia le credenziali** da Project Settings → API:
+1. Create a free account at [supabase.com](https://supabase.com)
+2. Create a new project
+3. Copy credentials from **Project Settings → API**:
    - `Project URL` → `NEXT_PUBLIC_SUPABASE_URL`
    - `anon public` → `NEXT_PUBLIC_SUPABASE_ANON_KEY`
    - `service_role` → `SUPABASE_SERVICE_ROLE_KEY`
+4. Run the migration in the SQL Editor: paste the contents of `supabase/migrations/001_initial_schema.sql` and execute
 
-4. **Esegui la migration** nel SQL Editor:
-   - Vai su SQL Editor nel dashboard Supabase
-   - Copia il contenuto di `supabase/migrations/001_initial_schema.sql`
-   - Esegui la query
+### 2. Set up Authentication
 
-### 2. Configurare Autenticazione
+In the Supabase dashboard → **Authentication → Providers**:
 
-Nel dashboard Supabase → Authentication → Providers:
+- **Email/Password**: enabled by default
+- **Google OAuth**: create a project in [Google Cloud Console](https://console.cloud.google.com/), generate an OAuth 2.0 Client, set the redirect to `https://YOUR_PROJECT.supabase.co/auth/v1/callback`, and paste Client ID and Secret into Supabase
 
-#### Email/Password
-- Già abilitato di default
+### 3. Set up Resend (Email)
 
-#### Google OAuth
-1. Vai su [Google Cloud Console](https://console.cloud.google.com/)
-2. Crea progetto → Credentials → OAuth 2.0 Client
-3. Authorized redirect: `https://YOUR_PROJECT.supabase.co/auth/v1/callback`
-4. Copia Client ID e Secret in Supabase
-
-### 3. Configurare Resend (Email)
-
-1. Crea account su [resend.com](https://resend.com)
-2. Genera API Key
-3. Aggiungi a `apps/web/.env.local`:
+1. Create an account at [resend.com](https://resend.com)
+2. Generate an API key and add it to `apps/web/.env.local`:
    ```env
    RESEND_API_KEY=re_xxxxxxxxxxxxx
    ```
 
-### 4. File .env.local completo
+### 4. Environment variables reference
 
-> ⚠️ **IMPORTANTE**: Il file `.env.local` deve essere creato in **`apps/web/.env.local`**, NON nella root del progetto!
+> ⚠️ **Important**: `.env.local` must be created at **`apps/web/.env.local`**, NOT at the repo root.
+
+| Variable | Required | Purpose |
+|----------|----------|---------|
+| `NEXT_PUBLIC_SUPABASE_URL` | Yes | Supabase project URL |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Yes | Supabase anon key |
+| `SUPABASE_SERVICE_ROLE_KEY` | Yes | Server-side admin operations |
+| `NEXT_PUBLIC_APP_URL` | Yes | Canonical URL (sitemap / metadata) |
+| `RESEND_API_KEY` | Optional | Transactional email |
+| `NEXT_PUBLIC_GTM_ID` | Optional | Google Tag Manager |
+| `NEXT_PUBLIC_COOKIEYES_ID` | Optional | Cookie consent banner |
+| `NEXT_PUBLIC_GOOGLE_ANALYTICS_ID` | Optional | GA direct (only if GTM is not set) |
+| `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` | Optional | Google Search Console meta tag |
 
 ---
 
-## 💻 Sviluppo
+## 💻 Development
 
-### Comandi Disponibili
+### Commands
 
 ```bash
-# Avvia tutti i servizi in sviluppo
-pnpm dev
-
-# Solo frontend (porta 3000)
-pnpm --filter @planora/web dev
-
-# Solo backend (porta 3001)
-pnpm --filter @planora/api dev
-
-# Build produzione
-pnpm build
-
-# Lint
-pnpm lint
-
-# Test
-pnpm test
-
-# Formattazione codice
-pnpm format
-
-# Genera tipi Supabase
-pnpm db:generate
+pnpm dev                          # start all apps in watch mode
+pnpm --filter @planora/web dev    # frontend only (port 3000)
+pnpm --filter @planora/api dev    # backend only (port 3001)
+pnpm build                        # production build
+pnpm lint                         # TypeScript type-check (tsc --noEmit)
+pnpm test                         # jest --passWithNoTests
+pnpm format                       # prettier on ts/tsx/md/json
+pnpm db:generate                  # regenerate Supabase types
+pnpm db:migrate                   # push migrations to Supabase
 ```
 
-### Porte di Sviluppo
+### Dev Ports
 
-| Servizio | URL |
-|----------|-----|
-| Frontend Next.js | http://localhost:3000 |
-| Backend NestJS | http://localhost:3001 |
+| Service | URL |
+|---------|-----|
+| Next.js frontend | http://localhost:3000 |
+| NestJS backend | http://localhost:3001 |
 | Supabase Studio | http://localhost:54322 |
-
-### Hot Reload
-
-Tutti i servizi supportano hot reload. Modifica il codice e vedrai le modifiche istantaneamente.
 
 ---
 
-## 📁 Struttura Progetto
+## 🎨 Animations
+
+The Minecraft pixel-art theme uses two distinct animation systems.
+
+### Background scene — `components/mc-background.tsx`
+
+A layered SVG landscape rendered once and animated entirely with **SVG SMIL** (`<animate>` / `<animateTransform>`). There is zero JavaScript per frame; all motion is declarative.
+
+The scene is built as depth layers from back to front:
+
+| Layer | Day | Night |
+|-------|-----|-------|
+| Sky gradient | Blue (#3D8FD6 → #B3DDF5) | Deep space (#05040F → #19305A) |
+| Aurora | — | 28 shimmering vertical bars (green / teal / violet gradients) that wave horizontally |
+| Stars | — | 28 static pixels; every third one twinkles with an opacity `<animate>` |
+| Shooting stars | — | 3 streaks that diagonal-flash and translate, hidden on mobile |
+| Moon / Sun | Pixelated sun with pulsing rays | Pixelated moon with craters |
+| Clouds | White, drift left at 70 s/loop | Dark, drift left at 90 s/loop |
+| Birds | 3 silhouettes cross left-to-right with wing-flap | — |
+| Far hills | Hazy silhouette | Dark blue |
+| Mid hills | Green | Near-black |
+| Near hills | Rolling XP-Bliss grass, each step highlighted | Same, darker |
+| Lake | Shimmer bands drift in alternating directions; sun/moon reflection pulses | Same with blue palette |
+| Trees | 9 foreground trees sway with staggered `rotate` timing | Same, darker trunks |
+| Flowers | Coloured 3×3 pixels scattered on the slope | — |
+| Fireflies | — | 8 particles that glow (opacity pulse) and drift in slow arcs |
+| Floating motes | White pollen rising (hidden on mobile) | Amber embers rising (hidden on mobile) |
+| Background chicken | Follows the hill surface via a 10-keyframe `translate` path, flips at the midpoint, body bobs at 0.5 s | Same |
+
+The theme (day vs. night) is read from `next-themes` `resolvedTheme` and all colours are recalculated on mount.
+
+### Walking chicken widget — `components/walking-chicken.tsx`
+
+An interactive chicken placed at the top edge of card components (`absolute bottom-full`). It uses a combination of **CSS animations** and **SVG SMIL**:
+
+| Motion | Technique | Detail |
+|--------|-----------|--------|
+| Horizontal walk | CSS `transform: translateX` on `.mc-chicken-pos` | Full-width wrapper translates from `4 px` to `calc(100% − 34 px)` and back. Using `transform` (GPU-composited) rather than `left` ensures it works on iOS Safari. |
+| Direction flip | CSS `scaleX(-1)` on `.mc-chicken-flip` | Switches at the 50% keyframe via `steps(1)` — the chicken faces left on the return leg. |
+| Leg steps | SVG SMIL `animateTransform type="rotate"` | Two legs rotate in opposite phase at 0.8 s each. SMIL is used so legs can be paused independently via `svg.pauseAnimations()`. |
+| Idle head bob | CSS `@keyframes mc-breathe` on `.mc-chicken-head` | Gentle 3.5 s translate + rotate loop, giving life while the chicken stands still. |
+| Hover pause | `onPointerEnter` / `onPointerLeave` (mouse only) | Sets `hovered = true` → adds `is-paused` class (CSS `animation-play-state: paused`) and calls `svg.pauseAnimations()`. Filtered to `pointerType === 'mouse'` so mobile touch taps never accidentally freeze the walk. |
+| Tap reaction | `onClick` → `poke()` | Sets `startled = true` for ~1 s, triggering CSS keyframes: body hop (`mc-hop`), neck stretch (`mc-neck`), wing flap (`mc-wing-f` / `mc-wing-b`), and five flying feather pixels (`mc-fly-a`…`mc-fly-e`). |
+| Reduced motion | `@media (prefers-reduced-motion: reduce)` | Disables all CSS animations (walk, flip, head bob). SMIL leg steps continue because SMIL is not a CSS animation. |
+
+---
+
+## 📁 Project Structure
 
 ```
-planora/
-├── 📁 .devcontainer/          # Configurazione GitHub Codespaces
-│   └── devcontainer.json
-│
-├── 📁 .github/
-│   └── workflows/
-│       └── ci.yml             # GitHub Actions CI/CD
-│
-├── 📁 .vscode/                # Impostazioni VS Code
-│   ├── extensions.json
-│   └── settings.json
-│
-├── 📁 apps/
-│   ├── 📁 web/                # 🌐 Frontend Next.js
+pollix/
+├── .devcontainer/             # GitHub Codespaces config
+├── .github/workflows/ci.yml   # GitHub Actions CI
+├── apps/
+│   ├── web/                   # Next.js 14 frontend (@planora/web)
 │   │   ├── app/               # App Router pages
-│   │   │   ├── layout.tsx     # Layout principale
-│   │   │   ├── page.tsx       # Homepage
-│   │   │   ├── login/         # Pagina login
-│   │   │   ├── dashboard/     # Dashboard utente
-│   │   │   ├── polls/
-│   │   │   │   ├── create/    # Creazione sondaggio
-│   │   │   │   └── [id]/      # Visualizzazione/voto
-│   │   │   └── auth/
-│   │   │       └── callback/  # OAuth callback
-│   │   │
-│   │   ├── components/
-│   │   │   ├── layout/        # Header, Footer, Navigation
-│   │   │   ├── providers/     # Context providers
-│   │   │   └── ui/            # Componenti shadcn/ui
-│   │   │
+│   │   ├── components/        # UI components
+│   │   │   ├── layout/        # Header, Footer, navigation
+│   │   │   ├── providers/     # Theme provider
+│   │   │   └── ui/            # shadcn/ui primitives
 │   │   ├── lib/
-│   │   │   ├── i18n/          # Configurazione i18n
-│   │   │   ├── supabase/      # Client Supabase
-│   │   │   └── utils.ts       # Utility functions
-│   │   │
-│   │   ├── messages/          # Traduzioni
-│   │   │   ├── en.json
-│   │   │   └── it.json
-│   │   │
-│   │   ├── middleware.ts      # Auth middleware
-│   │   ├── next.config.js
-│   │   ├── tailwind.config.ts
-│   │   └── package.json
-│   │
-│   └── 📁 api/                # 🔧 Backend NestJS
+│   │   │   ├── i18n/          # next-intl config
+│   │   │   └── supabase/      # browser + server clients
+│   │   └── messages/          # en.json / it.json translations
+│   └── api/                   # NestJS backend (@planora/api, optional)
 │       └── src/
-│           ├── main.ts        # Entry point
-│           ├── app.module.ts  # Root module
-│           ├── auth/          # Modulo autenticazione
-│           ├── polls/         # Modulo sondaggi
-│           │   ├── polls.controller.ts
-│           │   ├── polls.service.ts
-│           │   └── dto/
-│           ├── votes/         # Modulo voti
-│           └── supabase/      # Client Supabase
-│
-├── 📁 packages/
-│   └── 📁 shared/             # 📦 Codice condiviso
+│           ├── polls/         # Polls module
+│           ├── votes/         # Votes module
+│           └── supabase/      # Supabase service
+├── packages/
+│   └── shared/                # Shared types + Zod schemas (@planora/shared)
 │       └── src/
-│           ├── index.ts
-│           ├── types/         # TypeScript types
-│           └── schemas/       # Zod schemas
-│
-├── 📁 supabase/
-│   └── migrations/            # 🗃️ Migrazioni database
-│       └── 001_initial_schema.sql
-│
-├── .env.example               # Template variabili ambiente
-├── .gitignore
-├── .prettierrc
-├── package.json               # Root package.json
-├── pnpm-workspace.yaml        # Configurazione monorepo
-├── turbo.json                 # Configurazione Turborepo
-└── README.md
+│           ├── types/         # TypeScript interfaces (camelCase)
+│           └── schemas/       # Zod validation schemas
+└── supabase/
+    └── migrations/            # SQL migrations (run in order)
 ```
 
 ---
 
 ## 🚢 Deploy
 
-### Deploy Frontend su Vercel
+### Frontend on Vercel
 
-1. **Connetti Repository**
-   - Vai su [vercel.com](https://vercel.com)
-   - Import Git Repository → seleziona `planora`
-
-2. **Configura Build**
+1. Import the repository at [vercel.com](https://vercel.com)
+2. Configure the build:
    ```
-   Framework Preset: Next.js
-   Root Directory: apps/web
-   Build Command: pnpm build
-   Install Command: pnpm install
+   Framework Preset : Next.js
+   Root Directory   : apps/web
+   Build Command    : pnpm build
+   Install Command  : pnpm install
    ```
+3. Add all environment variables from `.env.local`
+4. Every push to `main` triggers an automatic deploy
 
-3. **Aggiungi Environment Variables**
-   - Copia tutte le variabili da `.env.local`
+### Backend (Optional)
 
-4. **Deploy!**
-   - Vercel builderà e deployerà automaticamente
-   - Ogni push su `main` triggera un nuovo deploy
+The NestJS API is optional — the web app talks directly to Supabase.
 
-### Deploy Backend (Opzionale)
-
-Il backend NestJS è opzionale se usi solo le API di Supabase. Per deployarlo:
-
-**Railway.app** (gratuito):
+**Railway.app:**
 ```bash
-# Installa Railway CLI
 npm i -g @railway/cli
-
-# Login e deploy
-railway login
-railway init
-railway up
+railway login && railway init && railway up
 ```
 
-**Render.com** (gratuito):
-1. Connetti repository
-2. Seleziona `apps/api` come root
-3. Build command: `pnpm build`
-4. Start command: `node dist/main`
+**Render.com:** connect the repository, set root to `apps/api`, build command `pnpm build`, start command `node dist/main`.
 
 ---
 
 ## 📚 API Reference
 
----
+The web app calls Supabase directly for most operations. The NestJS API mirrors the same endpoints for server-to-server use.
 
+All authenticated requests require:
+```http
+Authorization: Bearer <supabase_jwt_token>
+```
 
-## 🔎 SEO e Google Search Console
-
-Questa sezione descrive come verificare il sito su Google Search Console, quale metodo scegliere e come gestire Analytics/Tag Manager e il banner di consenso (CookieYes).
-
-**Varibili d'ambiente rilevanti**
-- `NEXT_PUBLIC_APP_URL`: URL pubblico dell'app (es. https://www.pollix.it). Usata per sitemap/metadata.
-- `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION`: stringa di verifica usata dal meta tag (opzionale).
-- `NEXT_PUBLIC_GTM_ID`: ID Google Tag Manager (es. `GTM-XXXXXXX`). Se presente, il layout carica GTM automaticamente.
-- `NEXT_PUBLIC_COOKIEYES_ID`: ID CookieYes per il banner di consenso (opzionale).
-- `NEXT_PUBLIC_GOOGLE_ANALYTICS_ID`: Measurement ID GA (es. `G-XXXXXXXXXX`). Viene usato **solo** se non è impostato `NEXT_PUBLIC_GTM_ID`.
-
-**Suggerimenti per la verifica su Search Console**
-- Metodo consigliato quando GTM è attivo: **File HTML** o **DNS**. Se il sito usa GTM, la verifica tramite lo snippet diretto di Google Analytics (`gtag.js`) può fallire perché Search Console rileva GTM al posto del tag diretto.
-- File HTML (semplice e affidabile): crea il file `google<id>.html` nella cartella `apps/web/public/` (es. [apps/web/public/google.html](apps/web/public/google.html)) e fai il deploy. Google cercherà `https://TUO_DOMINIO/google<id>.html`.
-- Meta tag: imposta `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` e deploya; il meta verrà aggiunto automaticamente nelle pagine.
-- DNS: aggiungi il record TXT fornito da Search Console al tuo DNS (metodo più solido per domini gestiti).
-
-**Nota su GTM vs Google Analytics (GA)**
-- Se usi `NEXT_PUBLIC_GTM_ID`, il progetto carica GTM nel `head`. In questo scenario Search Console potrebbe non riconoscere la verifica tramite lo snippet `gtag.js` (GA) perché GTM è il punto di iniezione dei tag. Per evitare problemi di verifica, preferisci la verifica via file HTML o DNS.
-
-**Consenso e cookie (CookieYes)**
-- Se integri CookieYes (`NEXT_PUBLIC_COOKIEYES_ID`), assicurati che il comportamento di attivazione dei tag sia coerente con le impostazioni di consenso: GTM o lo snippet GA non dovrebbero inviare dati finché l'utente non acconsente.
-
-**Dove configurare le variabili**
-- Crea e modifica il file `apps/web/.env.local` con le variabili sopra indicate. Non committare questo file nel repository.
-
-**Verifica rapida**
-1. Aggiungi il file di verifica HTML in `apps/web/public/` oppure imposta `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION`.
-2. Deploya su Vercel (o sul tuo hosting).
-3. Controlla `https://TUO_DOMINIO/google<id>.html` o apri Search Console e richiedi la verifica.
-
-Se hai bisogno, posso aggiornare le istruzioni di deploy su Vercel o aggiungere esempi passo-passo per CookieYes/GTM.
-- Metodo Google Analytics: se il sito è collegato a una proprietà GA con permessi di modifica, puoi usare il metodo "Google Analytics", ma è meno affidabile quando usi banner cookie/CMP.
-- Metodo DNS: aggiungi il record TXT richiesto dal provider DNS.
-
-3) robots.txt e sitemap
-- Il file pubblico è `apps/web/public/robots.txt` e contiene la direttiva `Sitemap: https://www.pollix.it/sitemap.xml` per impostazione predefinita.
-- Se il dominio reale è diverso, imposta `NEXT_PUBLIC_APP_URL` sul dominio corretto e/o aggiorna `apps/web/public/robots.txt` di conseguenza.
-- Dopo il deploy, controlla:
-   - `https://TUO_DOMINIO/robots.txt`
-   - `https://TUO_DOMINIO/sitemap.xml`
-
-4) GTM, CookieYes e Google Analytics
-- GTM: imposta `NEXT_PUBLIC_GTM_ID`; il progetto caricherà il codice Google Tag Manager nel `<head>` e il `noscript` nel `<body>`.
-- CookieYes: imposta `NEXT_PUBLIC_COOKIEYES_ID`; il progetto caricherà il banner CookieYes prima degli altri script.
-- Google Analytics diretto: imposta `NEXT_PUBLIC_GOOGLE_ANALYTICS_ID` solo se non usi GTM o CookieYes.
-- Se hai utenti nel SEE, usa una CMP/bannere cookie e Google Consent Mode prima di caricare qualsiasi script di tracciamento.
-
-5) Setup rapido per il tuo caso
-- Se hai già `NEXT_PUBLIC_GTM_ID=GTM-M8ZLT7QC`, usa GTM.
-- Se vuoi anche un banner di consenso, imposta `NEXT_PUBLIC_COOKIEYES_ID=4e25998bf314967534c3cc43`.
-- Se non vuoi usare GTM/CookieYes, lascia vuote quelle variabili e usa solo `NEXT_PUBLIC_GOOGLE_ANALYTICS_ID`.
-
-6) Istruzioni veloci per test locale e deploy
-- Localmente puoi controllare che tutto sia presente eseguendo:
-   ```bash
-   pnpm dev
-   # poi apri http://localhost:3000/robots.txt e http://localhost:3000/sitemap.xml
-   ```
-- Dopo il deploy, apri `https://TUO_DOMINIO/` e verifica:
-   - presenza del meta tag di verifica (se usi il metodo tag)
-   - presenza del file `google<id>.html` alla root (se usi il metodo file)
-   - presenza del container GTM in head e del `noscript` nel body (se usi GTM)
-   - presenza del banner CookieYes (se usi CookieYes)
-
-7) Nota importante per fork pubblici
-- Questo repository è pubblico: chiunque può forkare la repo. Non mettere mai chiavi segrete o credenziali nel sorgente.
-- Quando fai fork e deploy su Vercel / altro, configura le variabili d'ambiente nel pannello del progetto (Settings → Environment Variables). Non commitare `.env.local` nel fork.
-- Se vuoi che altri verifichino il loro deployment con Google Search Console, devono usare il loro dominio di deploy (es. `https://nome-fork.vercel.app`) e ripetere la procedura di verifica (file HTML o meta tag o DNS) per il loro dominio.
-
-Se vuoi, posso generare una checklist passo-passo personalizzata per il tuo dominio e aiutarti a verificare i file dopo il deploy.
-
-
-### Endpoints Principali
-
-#### Polls
+### Polls
 
 ```http
 POST /api/polls
 ```
-Crea un nuovo sondaggio.
-
-**Request Body:**
 ```json
 {
-  "title": "Quale logo preferisci?",
-  "description": "Stiamo ridisegnando il brand",
+  "title": "Which logo do you prefer?",
   "pollType": "single_choice",
-  "options": [
-    { "text": "Logo A" },
-    { "text": "Logo B" }
-  ],
+  "options": [{ "text": "Logo A" }, { "text": "Logo B" }],
   "allowAnonymous": true,
   "requireName": true
 }
 ```
 
-**Response:**
-```json
-{
-  "id": "uuid",
-  "shortId": "abc123",
-  "title": "Quale logo preferisci?",
-  "status": "active",
-  "createdAt": "2024-01-15T10:00:00Z"
-}
-```
-
----
-
 ```http
 GET /api/polls/:shortId
 ```
-Ottieni dettagli sondaggio con opzioni e voti.
+Returns poll details with options and votes.
 
----
+### Votes
 
 ```http
 POST /api/votes
 ```
-Registra un voto.
-
-**Request Body:**
 ```json
 {
   "pollId": "uuid",
   "optionIds": ["uuid1"],
-  "voterName": "Mario Rossi"
+  "voterName": "Jane Smith"
 }
 ```
 
 ---
 
-### Autenticazione
+## 🤝 Contributing
 
-Tutte le richieste autenticate richiedono header:
-```http
-Authorization: Bearer <supabase_jwt_token>
-```
+Contributions are welcome!
 
----
-
-## 🤝 Contribuire
-
-I contributi sono benvenuti! 
-
-### Come Contribuire
-
-1. **Fork** il repository
-2. **Crea branch** per la feature
-   ```bash
-   git checkout -b feature/amazing-feature
-   ```
-3. **Committa** le modifiche
-   ```bash
-   git commit -m 'Add amazing feature'
-   ```
-4. **Push** sul branch
-   ```bash
-   git push origin feature/amazing-feature
-   ```
-5. **Apri Pull Request**
-
-### Linee Guida
-
-- Segui lo stile di codice esistente
-- Aggiungi test per nuove funzionalità
-- Aggiorna documentazione se necessario
-- Un commit = una modifica logica
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/my-feature`
+3. Commit your changes: `git commit -m 'Add my feature'`
+4. Push the branch: `git push origin feature/my-feature`
+5. Open a Pull Request
 
 ---
 
 ## 🗺️ Roadmap
 
-### MVP (Completato) ✅
-- [x] Sondaggi scelta singola/multipla
-- [x] Sondaggi calendario con date picker avanzato
-- [x] Link condivisibili + QR
-- [x] Votazione guest con tracciamento anonimo
-- [x] Modifica/eliminazione voti (utenti loggati e anonimi)
-- [x] Dashboard separata: I miei sondaggi / Sondaggi votati
-- [x] Risultati real-time con Supabase Realtime
-- [x] Multilingua IT/EN con rilevamento automatico browser
+### MVP (Done) ✅
+- [x] Single / multiple choice polls
+- [x] Calendar polls with advanced date picker
+- [x] Shareable links + QR code
+- [x] Guest voting with anonymous tracking
+- [x] Edit / delete votes (logged-in and anonymous)
+- [x] Dashboard: My Polls / Voted Polls tabs
+- [x] Real-time results via Supabase Realtime
+- [x] IT / EN multilingual with automatic browser detection
 - [x] Dark mode
-- [x] SEO Google
-- [x] Google Analytics
+- [x] SEO + Google Analytics
 
-### v1.1 (In Sviluppo) 🚧
-- [x] UX/UI pixel stile Minecraft + animazioni al click (loader sulle card)
-- [x] Sfondo animato Minecraft (giorno/notte, parallasse, aurora, lucciole, pollo che cammina)
-- [x] Pagina account: modifica nome visualizzato (propagato anche ai voti) + eliminazione account con cancellazione dati
-- [x] Flag per scegliere di votare la non disponibilità in una data
-- [x] Flag Commenti al voto
-- [ ] Aggiungere numero di versione del software nel footer
-- [ ] anima il pollo se toccato (es. volano piume)
+### v1.1 (Released) 🎮
+- [x] Pixel / Minecraft UI + click animations
+- [x] Animated Minecraft background (day/night, parallax, aurora, fireflies, walking chicken)
+- [x] Account page: edit display name + delete account with data removal
+- [x] "Not available" flag for calendar polls
+- [x] Per-vote comments flag
 
-### v1.2 (Pianificato) 📋
-- [ ] Integrazione Google Calendar
-- [ ] Webhook per notifiche
-- [ ] Statistiche avanzate
-- [ ] Monitizzare tramite pubblicità
-- [ ] Notificare vincitore sondaggio
-- [ ] Identificare mobile e suggerire il salvataggio su schermata home
-- [ ] Export CSV/PDF
-- [ ] Protezione password sondaggi
-- [ ] Scadenza automatica
-- [ ] Notifiche email (verificare costi)
-- [ ] Moglioramenti UX/UI Mobile
+### v1.2 (Planned) 📋
+- [ ] Google Calendar integration
+- [ ] Webhook notifications
+- [ ] Advanced statistics
+- [ ] Winner notification
+- [ ] CSV / PDF export
+- [ ] Password-protected polls
+- [ ] Automatic poll expiry
+- [ ] Mobile UX improvements
 
-### v2.0 (Futuro) 🔮
-- [ ] AI: suggerimento slot migliori chiedendo le disponibilità e orari con LLM
-- [ ] Sondaggi con ranking
+### v2.0 (Future) 🔮
+- [ ] AI: suggest best time slots using LLM
+- [ ] Ranked-choice polls
 - [ ] Enterprise SSO
-- [ ] App mobile (React Native)
+- [ ] Mobile app (React Native)
 
 ---
 
-## 📄 Licenza
+## 📄 License
 
-Distribuito sotto licenza **MIT**. Vedi `LICENSE` per maggiori informazioni.
-
----
-
-## 👤 Autore
-
-**Il Tuo Nome**
-- GitHub: [@yourusername](https://github.com/umbertocicero)
-- LinkedIn: [Il Tuo Profilo](https://www.linkedin.com/in/umberto-antonio-cicero/)
+Distributed under the **MIT** licence. See `LICENSE` for details.
 
 ---
 
-## 🙏 Ringraziamenti
+## 👤 Author
 
-- [shadcn/ui](https://ui.shadcn.com/) - Componenti UI
-- [Supabase](https://supabase.com/) - Backend as a Service
-- [Vercel](https://vercel.com/) - Hosting
-- [Lucide Icons](https://lucide.dev/) - Icone
+- GitHub: [@umbertocicero](https://github.com/umbertocicero)
+- LinkedIn: [Umberto Antonio Cicero](https://www.linkedin.com/in/umberto-antonio-cicero/)
+
+---
+
+## 🙏 Acknowledgements
+
+- [shadcn/ui](https://ui.shadcn.com/) — UI components
+- [Supabase](https://supabase.com/) — Backend as a Service
+- [Vercel](https://vercel.com/) — Hosting
+- [Lucide Icons](https://lucide.dev/) — Icons
 
 ---
 
 <div align="center">
 
-⭐ **Se ti piace il progetto, lascia una stella!** ⭐
+⭐ **If you like the project, leave a star!** ⭐
 
 </div>
