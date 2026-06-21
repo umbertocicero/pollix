@@ -71,9 +71,19 @@ Light edges top-left, dark edges bottom-right — that's the game's standard "ra
 
 ## Motion
 
-- Snap, don't ease. Transitions are short (100–150ms) and often stepped rather than eased — `transition-timing-function: steps(4, end)` on hover/press states reinforces the pixel feel more than a smooth `ease-out`.
+Split motion into two registers and don't mix them:
+
+**1. UI chrome (controls, cards, inputs, menus) — snap, don't ease.**
+- Transitions are short (100–150ms) and often stepped rather than eased — `transition-timing-function: steps(4, end)` on hover/press states reinforces the pixel feel more than a smooth `ease-out`.
 - Button press = instant 1px shift down + bevel inversion, no scale/blur.
-- Avoid particle effects, glow pulses, or parallax — those read as "retro arcade," not Minecraft.
+- No particle effects, glow pulses, or parallax on interactive controls — those read as "retro arcade," not Minecraft.
+
+**2. Decorative scene background — ambient animation IS encouraged.**
+The one place rich, continuous motion belongs is a full-bleed scenic background that sits *behind* the content (think the game's own animated title screen / a living biome panorama). Here, slow ambient life sells the world and is a signature "wow" moment. Keep it pixel-honest: animate whole blocks, not sub-pixel tweens; loop seamlessly; keep it behind a readability overlay so it never fights the foreground text.
+- Build it as layered pixel SVG (`shapeRendering: crispEdges`) with **atmospheric perspective** — distant layers hazier/desaturated toward the sky color, near layers saturated. Parallax = slower drift on far layers, faster on near.
+- Good ambient elements: drifting clouds (seamless-loop tiling), day/night swap, aurora curtains, twinkling stars + occasional shooting star, water shimmer + celestial reflection, fireflies/embers, gentle tree sway, and a wandering mob (e.g. a side-view chicken that paces the meadow, flips at each turn, with stepping legs and a ground shadow).
+- All of it pure SVG/SMIL (`<animate>` / `<animateTransform>`) so it costs zero per-frame JS.
+- Reference implementation in this project: `apps/web/components/mc-background.tsx`.
 
 ## Things that break the illusion — avoid
 
@@ -83,3 +93,5 @@ Light edges top-left, dark edges bottom-right — that's the game's standard "ra
 - Anti-aliased icons or photographic imagery without a pixelation pass
 - Thin/light font weights — pixel fonts read best bold/regular, never thin
 - Glassmorphism, backdrop-blur, translucency — Minecraft UI is opaque and flat
+
+**Narrow exceptions, only for the decorative scene background (never for UI chrome):** a vertical sky/aurora gradient on the far backdrop is acceptable (the game's own sky is gradient); and a single low-opacity scrim (flat color or a light `backdrop-blur`) over the scene purely to keep foreground text legible is fine. Everything in the foreground UI stays opaque and flat.

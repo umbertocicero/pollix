@@ -84,11 +84,11 @@ const SHOOTING_STARS = [
   { x: 150, y: 30, dx: 60, dy: 26, len: 16, dur: 11, begin: 9.5 },
 ];
 
-// Day birds gliding across the sky.
+// Day birds gliding across the sky (kept in the visible mid-sky band).
 const BIRDS = [
-  { y: 52, dur: 26, begin: 0, scale: 1 },
-  { y: 70, dur: 34, begin: 4, scale: 0.8 },
-  { y: 40, dur: 30, begin: 9, scale: 0.9 },
+  { y: 100, dur: 26, begin: 0 },
+  { y: 126, dur: 34, begin: 4 },
+  { y: 112, dur: 30, begin: 9 },
 ];
 
 /* ── Stepped terrain paths (Minecraft block style) ───────────── */
@@ -117,23 +117,149 @@ const NEAR_HILLS =
 /* ── Reusable cloud cluster (tiled for seamless drift) ────────── */
 
 function CloudCluster({ main, shadow }: { main: string; shadow: string }) {
+  // Kept low in the sky band so they stay visible below the page header
+  // (the SVG is bottom-anchored with `slice`, so the very top gets cropped).
   return (
     <>
-      <rect x={60} y={48} width={44} height={8} fill={main} />
-      <rect x={52} y={56} width={60} height={10} fill={main} />
-      <rect x={56} y={66} width={48} height={6} fill={shadow} />
+      <rect x={60} y={98} width={44} height={8} fill={main} />
+      <rect x={52} y={106} width={60} height={10} fill={main} />
+      <rect x={56} y={116} width={48} height={6} fill={shadow} />
 
-      <rect x={250} y={32} width={36} height={8} fill={main} />
-      <rect x={244} y={40} width={48} height={10} fill={main} />
-      <rect x={248} y={50} width={40} height={6} fill={shadow} />
+      <rect x={250} y={92} width={36} height={8} fill={main} />
+      <rect x={244} y={100} width={48} height={10} fill={main} />
+      <rect x={248} y={110} width={40} height={6} fill={shadow} />
 
-      <rect x={420} y={58} width={28} height={6} fill={main} />
-      <rect x={416} y={64} width={36} height={8} fill={main} />
-      <rect x={418} y={72} width={30} height={4} fill={shadow} />
+      <rect x={420} y={104} width={28} height={6} fill={main} />
+      <rect x={416} y={110} width={36} height={8} fill={main} />
+      <rect x={418} y={118} width={30} height={4} fill={shadow} />
 
-      <rect x={150} y={80} width={22} height={6} fill={main} />
-      <rect x={146} y={86} width={30} height={6} fill={shadow} />
+      <rect x={150} y={124} width={22} height={6} fill={main} />
+      <rect x={146} y={130} width={30} height={6} fill={shadow} />
     </>
+  );
+}
+
+/* ── Walking chicken (side-view, Minecraft mob) ──────────────────
+   Art is drawn facing right, centered horizontally at x=0 with the
+   feet on y=0, so flipping is a clean scale(-1,1) around the origin.
+   It strolls back and forth across the left meadow (avoiding the lake),
+   following the near-hill surface, flipping direction at each turn. */
+
+const C = {
+  white: '#FFFFFF',
+  light: '#DCDCDC',
+  gray: '#C7C7C7',
+  beak: '#F2A93C',
+  beakDark: '#C77E2A',
+  red: '#D6352B',
+  leg: '#F2C84B',
+  eye: '#161616',
+};
+
+function Chicken() {
+  // Walk path: (centerX, surfaceY) ping-pong over the near hill.
+  const walk =
+    '60 186; 100 170; 140 159; 180 154; 220 159; 255 171; ' +
+    '220 159; 180 154; 140 159; 100 170; 60 186';
+  const walkKeys = '0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9;1';
+  const dur = 22;
+
+  return (
+    <g>
+      {/* position along the meadow */}
+      <animateTransform
+        attributeName="transform"
+        type="translate"
+        values={walk}
+        keyTimes={walkKeys}
+        dur={`${dur}s`}
+        repeatCount="indefinite"
+      />
+
+      {/* soft ground shadow (does not flip/bob) */}
+      <rect x={-7} y={-1} width={14} height={2} fill="#000000" opacity={0.15} />
+
+      {/* facing direction: flip at the turn */}
+      <g>
+        <animateTransform
+          attributeName="transform"
+          type="scale"
+          values="1 1;-1 1;1 1"
+          keyTimes="0;0.5;1"
+          calcMode="discrete"
+          dur={`${dur}s`}
+          repeatCount="indefinite"
+        />
+
+        {/* gentle body bob synced with the steps */}
+        <g>
+          <animateTransform
+            attributeName="transform"
+            type="translate"
+            values="0 0; 0 -1; 0 0"
+            dur="0.5s"
+            repeatCount="indefinite"
+          />
+
+          {/* tail */}
+          <rect x={-10} y={-18} width={3} height={7} fill={C.gray} />
+
+          {/* body */}
+          <rect x={-9} y={-16} width={17} height={9} fill={C.white} />
+          <rect x={-8} y={-20} width={15} height={13} fill={C.white} />
+          <rect x={-7} y={-10} width={13} height={3} fill={C.gray} />
+          <rect x={5} y={-18} width={2} height={8} fill={C.gray} />
+
+          {/* wing */}
+          <rect x={-6} y={-17} width={9} height={6} fill={C.light} />
+          <rect x={-4} y={-15} width={2} height={2} fill={C.gray} />
+          <rect x={0} y={-14} width={2} height={2} fill={C.gray} />
+
+          {/* head */}
+          <rect x={2} y={-24} width={8} height={8} fill={C.white} />
+          <rect x={3} y={-26} width={6} height={2} fill={C.white} />
+
+          {/* comb */}
+          <rect x={6} y={-27} width={3} height={2} fill={C.red} />
+
+          {/* eye */}
+          <rect x={6} y={-22} width={2} height={2} fill={C.eye} />
+
+          {/* beak */}
+          <rect x={10} y={-21} width={4} height={2} fill={C.beak} />
+          <rect x={10} y={-19} width={3} height={2} fill={C.beakDark} />
+
+          {/* wattle */}
+          <rect x={8} y={-18} width={2} height={3} fill={C.red} />
+
+          {/* back leg (steps out of phase) */}
+          <g>
+            <animateTransform
+              attributeName="transform"
+              type="rotate"
+              values="12 -2 -8; -12 -2 -8; 12 -2 -8"
+              dur="0.5s"
+              repeatCount="indefinite"
+            />
+            <rect x={-3} y={-8} width={2} height={6} fill={C.leg} />
+            <rect x={-5} y={-2} width={5} height={2} fill={C.leg} />
+          </g>
+
+          {/* front leg */}
+          <g>
+            <animateTransform
+              attributeName="transform"
+              type="rotate"
+              values="-12 2 -8; 12 2 -8; -12 2 -8"
+              dur="0.5s"
+              repeatCount="indefinite"
+            />
+            <rect x={1} y={-8} width={2} height={6} fill={C.leg} />
+            <rect x={-1} y={-2} width={5} height={2} fill={C.leg} />
+          </g>
+        </g>
+      </g>
+    </g>
   );
 }
 
@@ -379,15 +505,15 @@ export function McBackground({ className = '' }: { className?: string }) {
         {!night &&
           BIRDS.map((b, i) => (
             <g key={`bird${i}`}>
-              {/* left wing tip flaps */}
-              <rect x={0} y={1} width={2} height={1} fill="#2A2A2A" opacity={0.65}>
-                <animate attributeName="y" values="1;0;1" dur="0.6s" repeatCount="indefinite" />
+              {/* left wing flaps */}
+              <rect x={0} y={0} width={3} height={2} fill="#2F2F2F" opacity={0.8}>
+                <animate attributeName="y" values="0;2;0" dur="0.6s" repeatCount="indefinite" />
               </rect>
               {/* body */}
-              <rect x={2} y={2} width={2} height={1} fill="#2A2A2A" opacity={0.65} />
-              {/* right wing tip flaps */}
-              <rect x={4} y={1} width={2} height={1} fill="#2A2A2A" opacity={0.65}>
-                <animate attributeName="y" values="1;0;1" dur="0.6s" repeatCount="indefinite" />
+              <rect x={3} y={2} width={2} height={2} fill="#2F2F2F" opacity={0.8} />
+              {/* right wing flaps */}
+              <rect x={5} y={0} width={3} height={2} fill="#2F2F2F" opacity={0.8}>
+                <animate attributeName="y" values="0;2;0" dur="0.6s" repeatCount="indefinite" />
               </rect>
               <animateTransform
                 attributeName="transform"
@@ -476,6 +602,9 @@ export function McBackground({ className = '' }: { className?: string }) {
             </g>
           );
         })}
+
+        {/* ── Walking chicken on the meadow ── */}
+        <Chicken />
 
         {/* ── Dirt bottom layer ── */}
         <rect x={0} y={250} width={480} height={20} fill={dirt} />

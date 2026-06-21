@@ -38,6 +38,10 @@
 - 🔗 **Link condivisibili** - Condividi via link, QR code, email, WhatsApp
 - 👤 **Votazione guest** - Partecipa senza registrazione
 - 📊 **Risultati real-time** - Aggiornamenti istantanei con Supabase Realtime
+- 💬 **Commenti al voto** - Commento opzionale, attivabile dal creatore
+- 🚫 **Opzione "non disponibile"** - Per i sondaggi calendario, attivabile dal creatore
+- ⚙️ **Pagina account** - Modifica del nome visualizzato (propagato ai voti) ed eliminazione account
+- 🎨 **Tema pixel-art Minecraft** - Sfondo animato giorno/notte (parallasse, aurora, lucciole, pollo che cammina)
 - 🌍 **Multilingua** - Italiano e Inglese
 - 🌙 **Dark mode** - Tema chiaro/scuro automatico
 - 📱 **Mobile-first** - Design responsive ottimizzato
@@ -572,11 +576,12 @@ I contributi sono benvenuti!
 - [x] Google Analytics
 
 ### v1.1 (In Sviluppo) 🚧
-- [ ] UX/UI pisxel stile/minecraft (o Star Wars) + animazioni al click
+- [x] UX/UI pixel stile Minecraft + animazioni al click (loader sulle card)
+- [x] Sfondo animato Minecraft (giorno/notte, parallasse, aurora, lucciole, pollo che cammina)
+- [x] Pagina account: modifica nome visualizzato (propagato anche ai voti) + eliminazione account con cancellazione dati
 - [x] Flag per scegliere di votare la non disponibilità in una data
 - [x] Flag Commenti al voto
 - [ ] Aggiungere numero di versione del software nel footer
-- [ ] Animazioni
 
 ### v1.2 (Pianificato) 📋
 - [ ] Integrazione Google Calendar
