@@ -3,6 +3,15 @@
 import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
 
+/* ─────────────────────────────────────────────────────────────────
+   Minecraft-style animated landscape — XP "Bliss" inspired.
+   Layered parallax scene with atmospheric perspective:
+   sky → aurora → stars/shooting-stars → moon/sun → clouds (drift) →
+   far mountains → mid hills → near hills → lake (shimmer) →
+   trees (sway) → fireflies / birds → foreground.
+   Animation is pure SVG/SMIL so it runs with zero JS per frame.
+   ───────────────────────────────────────────────────────────────── */
+
 /* ── Static landscape data ───────────────────────────────────── */
 
 const STARS = [
@@ -63,8 +72,23 @@ const FLOWERS = [
 ];
 
 const FIREFLIES = [
-  { x: 300, y: 186 }, { x: 330, y: 192 }, { x: 350, y: 188 },
-  { x: 280, y: 184 }, { x: 160, y: 152 }, { x: 440, y: 180 },
+  { x: 300, y: 186, r: 14 }, { x: 330, y: 192, r: 18 }, { x: 350, y: 188, r: 12 },
+  { x: 280, y: 184, r: 16 }, { x: 160, y: 152, r: 20 }, { x: 440, y: 180, r: 13 },
+  { x: 120, y: 170, r: 15 }, { x: 210, y: 178, r: 17 },
+];
+
+// Shooting stars: each streaks diagonally then waits before repeating.
+const SHOOTING_STARS = [
+  { x: 60, y: 18, dx: 70, dy: 34, len: 18, dur: 9, begin: 1.5 },
+  { x: 250, y: 12, dx: 84, dy: 30, len: 22, dur: 13, begin: 6 },
+  { x: 150, y: 30, dx: 60, dy: 26, len: 16, dur: 11, begin: 9.5 },
+];
+
+// Day birds gliding across the sky.
+const BIRDS = [
+  { y: 52, dur: 26, begin: 0, scale: 1 },
+  { y: 70, dur: 34, begin: 4, scale: 0.8 },
+  { y: 40, dur: 30, begin: 9, scale: 0.9 },
 ];
 
 /* ── Stepped terrain paths (Minecraft block style) ───────────── */
@@ -90,6 +114,29 @@ const NEAR_HILLS =
   'H304 V200 H320 V208 H336 V212 H352 V208 H368 V200 H384 V190 ' +
   'H400 V180 H416 V174 H432 V178 H448 V186 H464 V196 H480 V270 Z';
 
+/* ── Reusable cloud cluster (tiled for seamless drift) ────────── */
+
+function CloudCluster({ main, shadow }: { main: string; shadow: string }) {
+  return (
+    <>
+      <rect x={60} y={48} width={44} height={8} fill={main} />
+      <rect x={52} y={56} width={60} height={10} fill={main} />
+      <rect x={56} y={66} width={48} height={6} fill={shadow} />
+
+      <rect x={250} y={32} width={36} height={8} fill={main} />
+      <rect x={244} y={40} width={48} height={10} fill={main} />
+      <rect x={248} y={50} width={40} height={6} fill={shadow} />
+
+      <rect x={420} y={58} width={28} height={6} fill={main} />
+      <rect x={416} y={64} width={36} height={8} fill={main} />
+      <rect x={418} y={72} width={30} height={4} fill={shadow} />
+
+      <rect x={150} y={80} width={22} height={6} fill={main} />
+      <rect x={146} y={86} width={30} height={6} fill={shadow} />
+    </>
+  );
+}
+
 /* ── Component ───────────────────────────────────────────────── */
 
 export function McBackground({ className = '' }: { className?: string }) {
@@ -103,26 +150,50 @@ export function McBackground({ className = '' }: { className?: string }) {
   const night = resolvedTheme === 'dark';
 
   const sky = night
-    ? { top: '#050510', mid: '#0D0D2B', bot: '#151540' }
-    : { top: '#4A98C9', mid: '#7EC0EE', bot: '#A8D8F5' };
+    ? { top: '#05040F', mid: '#0C0B2A', bot: '#19305A' }
+    : { top: '#3D8FD6', mid: '#74BEEA', bot: '#B3DDF5' };
 
+  // Atmospheric perspective: far layers are hazier / bluer.
   const hills = night
-    ? { far: '#0C1A08', mid: '#152210', near: '#1A2810', grassTop: '#1E3012' }
-    : { far: '#3A5524', mid: '#4A6E2E', near: '#5D8A3A', grassTop: '#6BA34A' };
+    ? { far: '#0E1A30', mid: '#10241B', near: '#163218', grassTop: '#264A20' }
+    : { far: '#7BA0BC', mid: '#4F7A36', near: '#5D8A3A', grassTop: '#72B24A' };
 
   const lakeC = night
-    ? { main: '#081828', highlight: '#0C2C42' }
-    : { main: '#4A9FD9', highlight: '#68B8E8' };
+    ? { main: '#081C32', highlight: '#1E5A86' }
+    : { main: '#4A9FD9', highlight: '#9BE0FF' };
 
   const tree = night
-    ? { trunk: '#2A1A0E', leaves: '#0E1A08', top: '#0A1406' }
+    ? { trunk: '#2A1A0E', leaves: '#102A12', top: '#0A1E0B' }
     : { trunk: '#6B4226', leaves: '#2B3F1A', top: '#1D2A11' };
 
   const dirt = night ? '#1A0E06' : '#6B4226';
 
   const cloud = night
-    ? { main: '#252545', shadow: '#1E1E38', opacity: 0.25 }
+    ? { main: '#23234A', shadow: '#191934', opacity: 0.3 }
     : { main: '#FFFFFF', shadow: '#D8E4F0', opacity: 0.9 };
+
+  // Aurora curtains (night): vertical beams across the sky that shimmer in a wave.
+  const auroraBars = Array.from({ length: 28 }, (_, i) => {
+    const x = i * 18 - 12;
+    const h = 64 + ((i * 37) % 40);          // varied curtain heights
+    const palette = ['url(#auroraGreen)', 'url(#auroraTeal)', 'url(#auroraViolet)'];
+    const fill = palette[i % 3];
+    const dur = 4 + ((i * 13) % 30) / 10;     // 4.0–6.9s
+    const phase = (i % 7) * 0.4;              // staggered shimmer
+    const baseO = 0.18 + ((i * 7) % 5) / 18;
+    return { x, h, fill, dur, phase, baseO, key: i };
+  });
+
+  // Floating motes — embers drifting up at night, pollen drifting in daytime.
+  const motes = Array.from({ length: 16 }, (_, i) => ({
+    x: (i * 53) % 480,
+    y: 120 + ((i * 29) % 110),
+    s: 1 + (i % 2),
+    dur: 7 + ((i * 11) % 60) / 10,
+    begin: (i * 0.6) % 6,
+    drift: i % 2 === 0 ? 8 : -6,
+    key: i,
+  }));
 
   return (
     <div className={className}>
@@ -132,15 +203,76 @@ export function McBackground({ className = '' }: { className?: string }) {
         className="w-full h-full block"
         style={{ shapeRendering: 'crispEdges' }}
       >
-        {/* ── Sky gradient ── */}
         <defs>
           <linearGradient id="mcSkyGrad" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor={sky.top} />
-            <stop offset="50%" stopColor={sky.mid} />
+            <stop offset="52%" stopColor={sky.mid} />
             <stop offset="100%" stopColor={sky.bot} />
           </linearGradient>
+          {/* Aurora gradients: bright at the top, fading downward */}
+          <linearGradient id="auroraGreen" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#9BFFB0" stopOpacity="0" />
+            <stop offset="35%" stopColor="#3DFF9E" stopOpacity="0.9" />
+            <stop offset="100%" stopColor="#0FA86A" stopOpacity="0" />
+          </linearGradient>
+          <linearGradient id="auroraTeal" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#7BFFE8" stopOpacity="0" />
+            <stop offset="40%" stopColor="#33E0D6" stopOpacity="0.85" />
+            <stop offset="100%" stopColor="#0E8FA8" stopOpacity="0" />
+          </linearGradient>
+          <linearGradient id="auroraViolet" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#E6A8FF" stopOpacity="0" />
+            <stop offset="45%" stopColor="#9D5BFF" stopOpacity="0.7" />
+            <stop offset="100%" stopColor="#5B2FB0" stopOpacity="0" />
+          </linearGradient>
+          {/* Moon glow reflected in the lake */}
+          <linearGradient id="moonReflect" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#F0E860" stopOpacity="0.35" />
+            <stop offset="100%" stopColor="#F0E860" stopOpacity="0" />
+          </linearGradient>
         </defs>
+
         <rect width="480" height="270" fill="url(#mcSkyGrad)" />
+
+        {/* ── Aurora borealis (night) ── */}
+        {night && (
+          <g>
+            {auroraBars.map((b) => (
+              <rect
+                key={`au${b.key}`}
+                x={b.x}
+                y={18}
+                width={14}
+                height={b.h}
+                fill={b.fill}
+                opacity={b.baseO}
+              >
+                <animate
+                  attributeName="opacity"
+                  values={`${b.baseO};${b.baseO + 0.4};${b.baseO * 0.6};${b.baseO}`}
+                  dur={`${b.dur}s`}
+                  begin={`${b.phase}s`}
+                  repeatCount="indefinite"
+                />
+                <animate
+                  attributeName="height"
+                  values={`${b.h};${b.h + 14};${b.h - 8};${b.h}`}
+                  dur={`${b.dur * 1.3}s`}
+                  begin={`${b.phase}s`}
+                  repeatCount="indefinite"
+                />
+              </rect>
+            ))}
+            {/* slow horizontal sway of the whole curtain */}
+            <animateTransform
+              attributeName="transform"
+              type="translate"
+              values="0 0; 10 0; -6 0; 0 0"
+              dur="18s"
+              repeatCount="indefinite"
+            />
+          </g>
+        )}
 
         {/* ── Stars (night) ── */}
         {night &&
@@ -157,7 +289,7 @@ export function McBackground({ className = '' }: { className?: string }) {
               {i % 3 === 0 && (
                 <animate
                   attributeName="opacity"
-                  values={`${s.o};${s.o * 0.2};${s.o}`}
+                  values={`${s.o};${s.o * 0.15};${s.o}`}
                   dur={`${2 + (i % 4)}s`}
                   repeatCount="indefinite"
                 />
@@ -165,47 +297,111 @@ export function McBackground({ className = '' }: { className?: string }) {
             </rect>
           ))}
 
-        {/* ── Moon / Sun ── */}
+        {/* ── Shooting stars (night) ── */}
+        {night &&
+          SHOOTING_STARS.map((st, i) => {
+            const activeFrac = st.len / (Math.hypot(st.dx, st.dy) + st.len);
+            return (
+              <g key={`sh${i}`}>
+                <g opacity={0}>
+                  {/* head */}
+                  <rect x={st.x} y={st.y} width={2} height={2} fill="#FFFFFF" />
+                  {/* tail */}
+                  <rect x={st.x - st.len} y={st.y - st.len * (st.dy / st.dx)} width={st.len} height={1} fill="#FFFFFF" opacity={0.5} />
+                  <animate
+                    attributeName="opacity"
+                    values="0;0;1;1;0"
+                    keyTimes={`0;${(1 - activeFrac * 1.2).toFixed(3)};${(1 - activeFrac).toFixed(3)};0.99;1`}
+                    dur={`${st.dur}s`}
+                    begin={`${st.begin}s`}
+                    repeatCount="indefinite"
+                  />
+                  <animateTransform
+                    attributeName="transform"
+                    type="translate"
+                    values={`0 0;0 0;${st.dx} ${st.dy}`}
+                    keyTimes={`0;${(1 - activeFrac).toFixed(3)};1`}
+                    dur={`${st.dur}s`}
+                    begin={`${st.begin}s`}
+                    repeatCount="indefinite"
+                  />
+                </g>
+              </g>
+            );
+          })}
+
+        {/* ── Moon / Sun with pulsing glow ── */}
         {night ? (
           <g>
-            <rect x={374} y={18} width={36} height={36} fill="#F0E860" opacity={0.06} />
-            <rect x={378} y={22} width={28} height={28} fill="#F0E860" />
+            <rect x={372} y={16} width={40} height={40} fill="#F0E860" opacity={0.06}>
+              <animate attributeName="opacity" values="0.04;0.1;0.04" dur="6s" repeatCount="indefinite" />
+            </rect>
+            <rect x={378} y={22} width={28} height={28} fill="#F4ED7A" />
             <rect x={384} y={28} width={8} height={8} fill="#D8D040" opacity={0.4} />
             <rect x={396} y={38} width={6} height={6} fill="#D8D040" opacity={0.3} />
             <rect x={386} y={42} width={4} height={4} fill="#C8C030" opacity={0.25} />
           </g>
         ) : (
           <g>
-            <rect x={368} y={12} width={48} height={48} fill="#FCEE4B" opacity={0.08} />
+            <rect x={366} y={10} width={52} height={52} fill="#FCEE4B" opacity={0.1}>
+              <animate attributeName="opacity" values="0.07;0.16;0.07" dur="5s" repeatCount="indefinite" />
+            </rect>
             <rect x={378} y={22} width={28} height={28} fill="#FCEE4B" />
             <rect x={382} y={26} width={8} height={8} fill="#FFF68F" opacity={0.5} />
-            <rect x={388} y={12} width={8} height={6} fill="#FCEE4B" opacity={0.45} />
-            <rect x={388} y={54} width={8} height={6} fill="#FCEE4B" opacity={0.45} />
-            <rect x={368} y={32} width={6} height={8} fill="#FCEE4B" opacity={0.45} />
-            <rect x={410} y={32} width={6} height={8} fill="#FCEE4B" opacity={0.45} />
+            {/* rays */}
+            <g opacity={0.5}>
+              <rect x={388} y={12} width={8} height={6} fill="#FCEE4B" />
+              <rect x={388} y={54} width={8} height={6} fill="#FCEE4B" />
+              <rect x={366} y={32} width={6} height={8} fill="#FCEE4B" />
+              <rect x={412} y={32} width={6} height={8} fill="#FCEE4B" />
+              <animate attributeName="opacity" values="0.3;0.7;0.3" dur="4s" repeatCount="indefinite" />
+            </g>
           </g>
         )}
 
-        {/* ── Clouds ── */}
+        {/* ── Drifting clouds (parallax, seamless loop) ── */}
         <g opacity={cloud.opacity}>
-          <rect x={60} y={48} width={44} height={8} fill={cloud.main} />
-          <rect x={52} y={56} width={60} height={10} fill={cloud.main} />
-          <rect x={56} y={66} width={48} height={6} fill={cloud.shadow} />
-
-          <rect x={250} y={32} width={36} height={8} fill={cloud.main} />
-          <rect x={244} y={40} width={48} height={10} fill={cloud.main} />
-          <rect x={248} y={50} width={40} height={6} fill={cloud.shadow} />
-
-          <rect x={420} y={58} width={28} height={6} fill={cloud.main} />
-          <rect x={416} y={64} width={36} height={8} fill={cloud.main} />
-          <rect x={418} y={72} width={30} height={4} fill={cloud.shadow} />
-
-          <rect x={150} y={80} width={22} height={6} fill={cloud.main} />
-          <rect x={146} y={86} width={30} height={6} fill={cloud.shadow} />
+          <g>
+            <g><CloudCluster main={cloud.main} shadow={cloud.shadow} /></g>
+            <g transform="translate(480,0)"><CloudCluster main={cloud.main} shadow={cloud.shadow} /></g>
+            <animateTransform
+              attributeName="transform"
+              type="translate"
+              from="0 0"
+              to="-480 0"
+              dur={night ? '90s' : '70s'}
+              repeatCount="indefinite"
+            />
+          </g>
         </g>
 
-        {/* ── Far hills (distant mountains) ── */}
-        <path d={FAR_HILLS} fill={hills.far} />
+        {/* ── Birds gliding (day) — flap their wings while crossing ── */}
+        {!night &&
+          BIRDS.map((b, i) => (
+            <g key={`bird${i}`}>
+              {/* left wing tip flaps */}
+              <rect x={0} y={1} width={2} height={1} fill="#2A2A2A" opacity={0.65}>
+                <animate attributeName="y" values="1;0;1" dur="0.6s" repeatCount="indefinite" />
+              </rect>
+              {/* body */}
+              <rect x={2} y={2} width={2} height={1} fill="#2A2A2A" opacity={0.65} />
+              {/* right wing tip flaps */}
+              <rect x={4} y={1} width={2} height={1} fill="#2A2A2A" opacity={0.65}>
+                <animate attributeName="y" values="1;0;1" dur="0.6s" repeatCount="indefinite" />
+              </rect>
+              <animateTransform
+                attributeName="transform"
+                type="translate"
+                values={`-40 ${b.y}; 520 ${b.y - 14}`}
+                dur={`${b.dur}s`}
+                begin={`${b.begin}s`}
+                repeatCount="indefinite"
+              />
+            </g>
+          ))}
+
+        {/* ── Far hills (hazy, atmospheric) ── */}
+        <path d={FAR_HILLS} fill={hills.far} opacity={night ? 1 : 0.85} />
 
         {/* ── Mid hills ── */}
         <path d={MID_HILLS} fill={hills.mid} />
@@ -224,34 +420,62 @@ export function McBackground({ className = '' }: { className?: string }) {
 
         {/* Grass-top highlights on each terrain step */}
         {NEAR_STEPS.map((step, i) => (
-          <rect
-            key={`g${i}`}
-            x={step.x}
-            y={step.y}
-            width={16}
-            height={3}
-            fill={hills.grassTop}
-          />
+          <rect key={`g${i}`} x={step.x} y={step.y} width={16} height={3} fill={hills.grassTop} />
         ))}
 
-        {/* ── Lake in the valley ── */}
+        {/* ── Lake in the valley with animated shimmer ── */}
         <rect x={286} y={188} width={118} height={2} fill={hills.near} />
         <rect x={286} y={190} width={118} height={28} fill={lakeC.main} />
-        <rect x={294} y={196} width={98} height={2} fill={lakeC.highlight} opacity={0.3} />
-        <rect x={300} y={204} width={72} height={2} fill={lakeC.highlight} opacity={0.2} />
-        <rect x={308} y={210} width={56} height={2} fill={lakeC.highlight} opacity={0.15} />
-        {night && (
-          <rect x={374} y={194} width={8} height={18} fill="#F0E860" opacity={0.12} />
+        {/* drifting highlight bands */}
+        <g>
+          <rect x={294} y={196} width={60} height={2} fill={lakeC.highlight} opacity={0.4}>
+            <animate attributeName="x" values="294;320;294" dur="7s" repeatCount="indefinite" />
+            <animate attributeName="opacity" values="0.4;0.15;0.4" dur="7s" repeatCount="indefinite" />
+          </rect>
+          <rect x={300} y={204} width={48} height={2} fill={lakeC.highlight} opacity={0.3}>
+            <animate attributeName="x" values="320;296;320" dur="9s" repeatCount="indefinite" />
+            <animate attributeName="opacity" values="0.3;0.1;0.3" dur="9s" repeatCount="indefinite" />
+          </rect>
+          <rect x={308} y={211} width={40} height={2} fill={lakeC.highlight} opacity={0.2}>
+            <animate attributeName="x" values="300;330;300" dur="11s" repeatCount="indefinite" />
+          </rect>
+        </g>
+        {/* celestial reflection shimmering on the water */}
+        {night ? (
+          <rect x={374} y={192} width={8} height={24} fill="url(#moonReflect)">
+            <animate attributeName="opacity" values="0.5;0.9;0.4;0.7" dur="4s" repeatCount="indefinite" />
+            <animate attributeName="width" values="8;6;10;8" dur="5s" repeatCount="indefinite" />
+          </rect>
+        ) : (
+          <rect x={374} y={192} width={8} height={22} fill="#FFF6A0" opacity={0.3}>
+            <animate attributeName="opacity" values="0.3;0.55;0.3" dur="4.5s" repeatCount="indefinite" />
+          </rect>
         )}
 
-        {/* ── Trees on near hills (large, foreground) ── */}
-        {TREES_NEAR.map((t, i) => (
-          <g key={`tn${i}`}>
-            <rect x={t.x} y={t.gy - 22} width={6} height={22} fill={tree.trunk} />
-            <rect x={t.x - 9} y={t.gy - 36} width={24} height={14} fill={tree.leaves} />
-            <rect x={t.x - 5} y={t.gy - 42} width={16} height={6} fill={tree.top} />
-          </g>
-        ))}
+        {/* ── Trees on near hills (large, foreground, gentle sway) ── */}
+        {TREES_NEAR.map((t, i) => {
+          const cx = t.x + 3;
+          const cy = t.gy;
+          const dur = 4 + (i % 5) * 0.8;
+          const amp = 1.2 + (i % 3) * 0.4;
+          return (
+            <g key={`tn${i}`}>
+              <rect x={t.x} y={t.gy - 22} width={6} height={22} fill={tree.trunk} />
+              <g>
+                <rect x={t.x - 9} y={t.gy - 36} width={24} height={14} fill={tree.leaves} />
+                <rect x={t.x - 5} y={t.gy - 42} width={16} height={6} fill={tree.top} />
+                <animateTransform
+                  attributeName="transform"
+                  type="rotate"
+                  values={`${-amp} ${cx} ${cy}; ${amp} ${cx} ${cy}; ${-amp} ${cx} ${cy}`}
+                  dur={`${dur}s`}
+                  begin={`${i * 0.4}s`}
+                  repeatCount="indefinite"
+                />
+              </g>
+            </g>
+          );
+        })}
 
         {/* ── Dirt bottom layer ── */}
         <rect x={0} y={250} width={480} height={20} fill={dirt} />
@@ -262,25 +486,64 @@ export function McBackground({ className = '' }: { className?: string }) {
             <rect key={`fl${i}`} x={f.x} y={f.y} width={3} height={3} fill={f.c} />
           ))}
 
-        {/* ── Fireflies (night) ── */}
+        {/* ── Floating motes (embers at night / pollen by day) ── */}
+        {motes.map((m) => (
+          <rect
+            key={`mote${m.key}`}
+            x={m.x}
+            y={m.y}
+            width={m.s}
+            height={m.s}
+            fill={night ? '#FFCC66' : '#FFFFFF'}
+            opacity={0}
+          >
+            <animate
+              attributeName="opacity"
+              values="0;0.7;0"
+              dur={`${m.dur}s`}
+              begin={`${m.begin}s`}
+              repeatCount="indefinite"
+            />
+            <animateTransform
+              attributeName="transform"
+              type="translate"
+              values={`0 0; ${m.drift} -26; 0 -52`}
+              dur={`${m.dur}s`}
+              begin={`${m.begin}s`}
+              repeatCount="indefinite"
+            />
+          </rect>
+        ))}
+
+        {/* ── Fireflies (night) — drift + glow ── */}
         {night &&
           FIREFLIES.map((ff, i) => (
-            <rect
-              key={`ff${i}`}
-              x={ff.x}
-              y={ff.y}
-              width={2}
-              height={2}
-              fill="#AAFF44"
-              opacity={0.5}
-            >
-              <animate
-                attributeName="opacity"
-                values="0.05;0.7;0.05"
-                dur={`${2.5 + i * 0.7}s`}
+            <g key={`ff${i}`}>
+              <rect x={ff.x} y={ff.y} width={2} height={2} fill="#CDFF66">
+                <animate
+                  attributeName="opacity"
+                  values="0.05;0.9;0.05"
+                  dur={`${2.5 + i * 0.6}s`}
+                  repeatCount="indefinite"
+                />
+              </rect>
+              {/* soft glow */}
+              <rect x={ff.x - 1} y={ff.y - 1} width={4} height={4} fill="#AAFF44" opacity={0.15}>
+                <animate
+                  attributeName="opacity"
+                  values="0;0.3;0"
+                  dur={`${2.5 + i * 0.6}s`}
+                  repeatCount="indefinite"
+                />
+              </rect>
+              <animateTransform
+                attributeName="transform"
+                type="translate"
+                values={`0 0; ${i % 2 ? ff.r : -ff.r} -8; ${i % 2 ? -ff.r : ff.r} 4; 0 0`}
+                dur={`${8 + i}s`}
                 repeatCount="indefinite"
               />
-            </rect>
+            </g>
           ))}
       </svg>
     </div>
