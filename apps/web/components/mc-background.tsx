@@ -158,9 +158,11 @@ const C = {
 
 function Chicken() {
   // Walk path: (centerX, surfaceY) ping-pong over the near hill.
+  // Centred around x≈190 so it stays inside the band that's visible on
+  // mobile (heavy horizontal crop), while still looking good full-width.
   const walk =
-    '60 186; 100 170; 140 159; 180 154; 220 159; 255 171; ' +
-    '220 159; 180 154; 140 159; 100 170; 60 186';
+    '100 170; 140 159; 180 154; 215 157; 250 169; 278 180; ' +
+    '250 169; 215 157; 180 154; 140 159; 100 170';
   const walkKeys = '0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9;1';
   const dur = 22;
 

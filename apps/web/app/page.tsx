@@ -21,10 +21,14 @@ export default function HomePage() {
         <main className="flex-1">
 
           {/* ── HERO ──────────────────────────────────────────────── */}
-          <section className="relative overflow-hidden py-16 sm:py-28 lg:py-36">
-            {/* Readability scrim — a touch darker on mobile where text
-                overlaps more of the scene */}
-            <div className="absolute inset-0 bg-black/40 sm:bg-black/25 z-0" />
+          {/* Taller on mobile so the meadow (where the chicken walks) is
+              revealed inside the hero instead of hiding behind the next
+              opaque section. */}
+          <section className="relative overflow-hidden py-16 sm:py-28 lg:py-36 min-h-[85vh] sm:min-h-0">
+            {/* Readability scrim: dark behind the text at the top, fading out
+                lower down so the animated landscape (and the chicken) stays
+                visible. */}
+            <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/35 to-black/5 sm:from-black/35 sm:via-black/25 sm:to-black/5 z-0" />
 
             <div className="container relative z-10 mx-auto px-4">
             <div className="mx-auto max-w-3xl text-center">
