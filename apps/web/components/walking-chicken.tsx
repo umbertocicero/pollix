@@ -54,19 +54,20 @@ export function WalkingChicken({ duration = 30, size = 32, className = '' }: Pro
   return (
     <div
       aria-hidden
-      className={`mc-chicken-walker absolute bottom-full left-0 z-10 ${paused ? 'is-paused' : ''} ${className}`}
+      className={`mc-chicken-walker absolute bottom-full left-0 w-full z-10 ${paused ? 'is-paused' : ''} ${className}`}
       style={{ '--chk-dur': `${duration}s`, height: size } as CSSProperties}
     >
-      <div className="mc-chicken-flip" style={{ height: size }}>
-        <button
-          type="button"
-          onClick={poke}
-          onPointerEnter={(e) => { if (e.pointerType === 'mouse') setHovered(true); }}
-          onPointerLeave={(e) => { if (e.pointerType === 'mouse') setHovered(false); }}
-          aria-label="chicken"
-          className={`mc-chicken-body block cursor-pointer border-0 bg-transparent p-0 ${startled ? 'is-startled' : ''}`}
-          style={{ height: size, lineHeight: 0 }}
-        >
+      <div className="mc-chicken-pos" style={{ height: size }}>
+        <div className="mc-chicken-flip" style={{ height: size }}>
+          <button
+            type="button"
+            onClick={poke}
+            onPointerEnter={(e) => { if (e.pointerType === 'mouse') setHovered(true); }}
+            onPointerLeave={(e) => { if (e.pointerType === 'mouse') setHovered(false); }}
+            aria-label="chicken"
+            className={`mc-chicken-body block cursor-pointer border-0 bg-transparent p-0 ${startled ? 'is-startled' : ''}`}
+            style={{ height: size, lineHeight: 0 }}
+          >
           <svg
             ref={svgRef}
             height={size}
@@ -143,7 +144,9 @@ export function WalkingChicken({ duration = 30, size = 32, className = '' }: Pro
               <rect x={-1} y={-2} width={5} height={2} fill={C.leg} />
             </g>
           </svg>
-        </button>
+          </button>
+        </div>
+
       </div>
     </div>
   );

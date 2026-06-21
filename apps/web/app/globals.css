@@ -171,7 +171,10 @@
    Tap/hover triggers a ~1s "startled" reaction.
    ───────────────────────────────────────────────────────────── */
 
-.mc-chicken-walker {
+.mc-chicken-pos {
+  position: absolute;
+  left: 0;
+  width: 100%;
   animation: mc-chk-walk var(--chk-dur, 14s) linear infinite;
 }
 .mc-chicken-flip {
@@ -180,9 +183,9 @@
 }
 
 @keyframes mc-chk-walk {
-  0%   { left: 4px; }
-  50%  { left: calc(100% - 34px); }
-  100% { left: 4px; }
+  0%   { transform: translateX(4px); }
+  50%  { transform: translateX(calc(100% - 34px)); }
+  100% { transform: translateX(4px); }
 }
 @keyframes mc-chk-face {
   0%, 49.9% { transform: scaleX(1); }
@@ -263,7 +266,7 @@
 
 /* hover (or the startled moment) freezes the stroll; the SMIL legs are
    frozen from JS via pauseAnimations(). */
-.mc-chicken-walker.is-paused,
+.mc-chicken-walker.is-paused .mc-chicken-pos,
 .mc-chicken-walker.is-paused .mc-chicken-flip {
   animation-play-state: paused;
 }
@@ -290,7 +293,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .mc-chicken-walker,
+  .mc-chicken-pos,
   .mc-chicken-flip,
   .mc-chicken-head {
     animation: none;
