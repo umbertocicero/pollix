@@ -51,7 +51,22 @@
         "title": "Sondaggi Calendario",
         "description": "Trova il momento migliore per tutti"
       }
+    },
+    "howItWorks": {
+      "title": "Come Funziona",
+      "step1Title": "Crea",
+      "step1Description": "Configura il tuo sondaggio in pochi secondi",
+      "step2Title": "Condividi",
+      "step2Description": "Invia il link o il codice QR ai partecipanti",
+      "step3Title": "Decidi",
+      "step3Description": "Visualizza i risultati in tempo reale e decidi insieme",
+      "cta": "Crea il Tuo Sondaggio"
     }
+  },
+  "footer": {
+    "createPoll": "Crea Sondaggio",
+    "features": "Funzionalità",
+    "madeWith": "Fatto con"
   },
   "poll": {
     "types": {

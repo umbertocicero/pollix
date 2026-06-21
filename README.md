@@ -575,10 +575,10 @@ I contributi sono benvenuti!
 - [ ] UX/UI pisxel stile/minecraft (o Star Wars) + animazioni al click
 - [ ] Flag per scegliere di votare la non disponibilità in una data
 - [ ] Flag Commenti al voto
-- [ ] Allineare pulsanti toolbar a sinistra
-- [ ] Rimuovere cognome dalla toolbar
 - [ ] Aggiungere numero di versione del software nel footer
 - [ ] Ottimizzazione DB (tabella boll result)
+- [ ] Modifica nome utente da visualizzare agli altri
+- [ ] Animazioni
 
 ### v1.2 (Pianificato) 📋
 - [ ] Integrazione Google Calendar
@@ -592,7 +592,6 @@ I contributi sono benvenuti!
 - [ ] Scadenza automatica
 - [ ] Notifiche email (verificare costi)
 - [ ] Moglioramenti UX/UI Mobile
-- [ ] Modifica dati utente per utenti registrati tramite email
 
 ### v2.0 (Futuro) 🔮
 - [ ] AI: suggerimento slot migliori chiedendo le disponibilità e orari con LLM

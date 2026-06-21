@@ -897,22 +897,22 @@ export default function PollVotePage() {
                             'text-xl font-medium',
                             isUserChoice ? 'text-[#3DCC4A]' : 'text-foreground'
                           )}>
-                            {isUserChoice && <span className="text-[#FCEE4B] mr-1">✓</span>}
+                            {isUserChoice && <span className="text-[#5D8A3A] dark:text-[#FCEE4B] mr-1">✓</span>}
                             {getOptionText(option)}
                           </span>
                           <span className={cn(
                             'text-lg font-pixel tabular-nums ml-4 shrink-0',
-                            isUserChoice ? 'text-[#FCEE4B]' : 'text-muted-foreground'
+                            isUserChoice ? 'text-[#5D8A3A] dark:text-[#FCEE4B]' : 'text-muted-foreground'
                           )}>
                             {result?.voteCount || 0} ({result?.percentage || 0}%)
                           </span>
                         </div>
                         {/* XP-bar style vote bar */}
-                        <div className="mc-inset h-5 overflow-hidden bg-[#2A2A2A]">
+                        <div className="mc-inset h-5 overflow-hidden bg-[#E0E0E0] dark:bg-[#2A2A2A]">
                           <div
                             className={cn(
                               'h-full transition-all duration-500',
-                              isUserChoice ? 'bg-[#3DCC4A]' : 'bg-[#6B6B6B]'
+                              isUserChoice ? 'bg-[#3DCC4A]' : 'bg-[#A0A0A0] dark:bg-[#6B6B6B]'
                             )}
                             style={{ width: `${result?.percentage || 0}%` }}
                           />
@@ -923,7 +923,7 @@ export default function PollVotePage() {
 
                   {/* Collapsible voter details */}
                   <Collapsible>
-                    <CollapsibleTrigger className="mc-panel flex items-center gap-3 p-3 text-muted-foreground hover:text-foreground transition-colors cursor-pointer group w-full" style={{ background: '#3B3B3B' }}>
+                    <CollapsibleTrigger className="mc-panel flex items-center gap-3 p-3 text-muted-foreground hover:text-foreground transition-colors cursor-pointer group w-full">
                       <Users className="h-5 w-5" />
                       <span className="text-base">{t('poll.results.totalVotes', { count: totalVotes })}</span>
                       <ChevronDown className="h-5 w-5 transition-transform group-data-[state=open]:rotate-180" />
@@ -940,7 +940,7 @@ export default function PollVotePage() {
                               {result.voterNames.map((name, idx) => (
                                 <span
                                   key={idx}
-                                  className="mc-raised inline-flex items-center bg-[#5D8A3A]/20 px-3 py-1 text-sm text-[#3DCC4A]"
+                                  className="mc-raised inline-flex items-center bg-[#5D8A3A]/15 px-3 py-1 text-sm text-[#3A6E24] dark:text-[#3DCC4A]"
                                 >
                                   {name}
                                 </span>
@@ -1009,22 +1009,22 @@ export default function PollVotePage() {
                             'text-xl font-medium',
                             isUserChoice ? 'text-[#3DCC4A]' : 'text-foreground'
                           )}>
-                            {isUserChoice && <span className="text-[#FCEE4B] mr-1">✓</span>}
+                            {isUserChoice && <span className="text-[#5D8A3A] dark:text-[#FCEE4B] mr-1">✓</span>}
                             {getOptionText(option)}
                           </span>
                           <span className={cn(
                             'text-lg font-pixel tabular-nums ml-4 shrink-0',
-                            isUserChoice ? 'text-[#FCEE4B]' : 'text-muted-foreground'
+                            isUserChoice ? 'text-[#5D8A3A] dark:text-[#FCEE4B]' : 'text-muted-foreground'
                           )}>
                             {result?.voteCount || 0} ({result?.percentage || 0}%)
                           </span>
                         </div>
                         {/* XP-bar style vote bar */}
-                        <div className="mc-inset h-5 overflow-hidden bg-[#2A2A2A]">
+                        <div className="mc-inset h-5 overflow-hidden bg-[#E0E0E0] dark:bg-[#2A2A2A]">
                           <div
                             className={cn(
                               'h-full transition-all duration-500',
-                              isUserChoice ? 'bg-[#3DCC4A]' : 'bg-[#6B6B6B]'
+                              isUserChoice ? 'bg-[#3DCC4A]' : 'bg-[#A0A0A0] dark:bg-[#6B6B6B]'
                             )}
                             style={{ width: `${result?.percentage || 0}%` }}
                           />
@@ -1035,7 +1035,7 @@ export default function PollVotePage() {
 
                   {/* Collapsible voter details */}
                   <Collapsible>
-                    <CollapsibleTrigger className="mc-panel flex items-center gap-3 p-3 text-muted-foreground hover:text-foreground transition-colors cursor-pointer group w-full" style={{ background: '#3B3B3B' }}>
+                    <CollapsibleTrigger className="mc-panel flex items-center gap-3 p-3 text-muted-foreground hover:text-foreground transition-colors cursor-pointer group w-full">
                       <Users className="h-5 w-5" />
                       <span className="text-base">{t('poll.results.totalVotes', { count: totalVotes })}</span>
                       <ChevronDown className="h-5 w-5 transition-transform group-data-[state=open]:rotate-180" />
@@ -1052,7 +1052,7 @@ export default function PollVotePage() {
                               {result.voterNames.map((name, idx) => (
                                 <span
                                   key={idx}
-                                  className="mc-raised inline-flex items-center bg-[#5D8A3A]/20 px-3 py-1 text-sm text-[#3DCC4A]"
+                                  className="mc-raised inline-flex items-center bg-[#5D8A3A]/15 px-3 py-1 text-sm text-[#3A6E24] dark:text-[#3DCC4A]"
                                 >
                                   {name}
                                 </span>

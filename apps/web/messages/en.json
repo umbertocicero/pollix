@@ -51,7 +51,22 @@
         "title": "Calendar Polls",
         "description": "Find the best time for everyone"
       }
+    },
+    "howItWorks": {
+      "title": "How It Works",
+      "step1Title": "Create",
+      "step1Description": "Set up your poll in seconds with our pixel-crafted interface",
+      "step2Title": "Share",
+      "step2Description": "Send the link or QR code to participants",
+      "step3Title": "Decide",
+      "step3Description": "View real-time results and make decisions together",
+      "cta": "Create Your Poll"
     }
+  },
+  "footer": {
+    "createPoll": "Create Poll",
+    "features": "Features",
+    "madeWith": "Made with"
   },
   "poll": {
     "types": {

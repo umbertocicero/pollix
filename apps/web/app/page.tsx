@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { McBackground } from '@/components/mc-background';
+import { FeatureCard } from '@/components/feature-card';
 import { CheckCircle2, ListChecks, Calendar } from 'lucide-react';
 
 export default function HomePage() {
@@ -68,11 +69,7 @@ export default function HomePage() {
             <div className="mx-auto max-w-5xl grid grid-cols-1 gap-6 md:grid-cols-3">
 
               {/* Slot 1 — Single Choice */}
-              <Link
-                href="/polls/create?type=single_choice"
-                className="mc-panel mc-btn p-8 block no-underline bg-[#E0E0E0] dark:bg-[#3B3B3B]"
-              >
-                {/* Icon slot */}
+              <FeatureCard href="/polls/create?type=single_choice">
                 <div
                   className="mc-slot w-16 h-16 flex items-center justify-center mb-6"
                 >
@@ -84,17 +81,10 @@ export default function HomePage() {
                 <p className="font-pixel text-xs text-[#666] dark:text-[#888] leading-6">
                   {t('home.features.singleChoice.description')}
                 </p>
-                {/* Rarity tag — common green */}
-                <div className="mt-6 inline-block px-2 py-1 bg-[#3DCC4A]/20 border border-[#3DCC4A]/40">
-                  <span className="font-pixel text-xs text-[#3DCC4A]">Common</span>
-                </div>
-              </Link>
+              </FeatureCard>
 
               {/* Slot 2 — Multiple Choice */}
-              <Link
-                href="/polls/create?type=multiple_choice"
-                className="mc-panel mc-btn p-8 block no-underline bg-[#E0E0E0] dark:bg-[#3B3B3B]"
-              >
+              <FeatureCard href="/polls/create?type=multiple_choice">
                 <div
                   className="mc-slot w-16 h-16 flex items-center justify-center mb-6"
                 >
@@ -106,17 +96,10 @@ export default function HomePage() {
                 <p className="font-pixel text-xs text-[#666] dark:text-[#888] leading-6">
                   {t('home.features.multipleChoice.description')}
                 </p>
-                {/* Rarity tag — uncommon gold */}
-                <div className="mt-6 inline-block px-2 py-1 bg-[#FCEE4B]/20 border border-[#FCEE4B]/40">
-                  <span className="font-pixel text-xs text-[#FCEE4B]">Uncommon</span>
-                </div>
-              </Link>
+              </FeatureCard>
 
               {/* Slot 3 — Calendar */}
-              <Link
-                href="/polls/create?type=calendar"
-                className="mc-panel mc-btn p-8 block no-underline bg-[#E0E0E0] dark:bg-[#3B3B3B]"
-              >
+              <FeatureCard href="/polls/create?type=calendar">
                 <div
                   className="mc-slot w-16 h-16 flex items-center justify-center mb-6"
                 >
@@ -128,11 +111,7 @@ export default function HomePage() {
                 <p className="font-pixel text-xs text-[#666] dark:text-[#888] leading-6">
                   {t('home.features.calendar.description')}
                 </p>
-                {/* Rarity tag — rare diamond */}
-                <div className="mt-6 inline-block px-2 py-1 bg-[#5DEFEA]/20 border border-[#5DEFEA]/40">
-                  <span className="font-pixel text-xs text-[#5DEFEA]">Rare</span>
-                </div>
-              </Link>
+              </FeatureCard>
 
             </div>
           </div>
@@ -144,7 +123,7 @@ export default function HomePage() {
 
             <div className="mx-auto max-w-2xl text-center mb-16">
               <h2 className="font-press text-base sm:text-lg text-[#1E1E1E] dark:text-white">
-                How It Works
+                {t('home.howItWorks.title')}
               </h2>
               <div className="mt-4 mx-auto h-1 w-24 bg-[#9C6B30]" />
             </div>
@@ -165,9 +144,9 @@ export default function HomePage() {
                 >
                   1
                 </div>
-                <h3 className="font-pixel text-base text-[#1E1E1E] dark:text-white mb-3">Create</h3>
+                <h3 className="font-pixel text-base text-[#1E1E1E] dark:text-white mb-3">{t('home.howItWorks.step1Title')}</h3>
                 <p className="font-pixel text-xs text-[#666] dark:text-[#888] leading-6">
-                  Set up your poll in seconds with our pixel-crafted interface
+                  {t('home.howItWorks.step1Description')}
                 </p>
               </div>
 
@@ -185,9 +164,9 @@ export default function HomePage() {
                 >
                   2
                 </div>
-                <h3 className="font-pixel text-base text-[#1E1E1E] dark:text-white mb-3">Share</h3>
+                <h3 className="font-pixel text-base text-[#1E1E1E] dark:text-white mb-3">{t('home.howItWorks.step2Title')}</h3>
                 <p className="font-pixel text-xs text-[#666] dark:text-[#888] leading-6">
-                  Send the link or QR code to participants
+                  {t('home.howItWorks.step2Description')}
                 </p>
               </div>
 
@@ -205,9 +184,9 @@ export default function HomePage() {
                 >
                   3
                 </div>
-                <h3 className="font-pixel text-base text-[#1E1E1E] dark:text-white mb-3">Decide</h3>
+                <h3 className="font-pixel text-base text-[#1E1E1E] dark:text-white mb-3">{t('home.howItWorks.step3Title')}</h3>
                 <p className="font-pixel text-xs text-[#666] dark:text-[#888] leading-6">
-                  View real-time results and make decisions together
+                  {t('home.howItWorks.step3Description')}
                 </p>
               </div>
 
@@ -221,7 +200,7 @@ export default function HomePage() {
                 className="font-press text-xs px-8 py-4 h-auto"
               >
                 <Link href="/polls/create">
-                  [ Create Your Poll ]
+                  [ {t('home.howItWorks.cta')} ]
                 </Link>
               </Button>
             </div>
