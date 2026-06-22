@@ -192,6 +192,31 @@ In the Supabase dashboard → **Authentication → Providers**:
    ```env
    RESEND_API_KEY=re_xxxxxxxxxxxxx
    ```
+3. **(Optional) Verify your domain** on Resend → Domains → Add Domain → `pollix.it`, then add the SPF/DKIM DNS records. Required to send from `noreply@pollix.it` instead of Resend's shared domain.
+
+#### Configure Supabase to send emails via Resend SMTP
+
+In the Supabase Dashboard → **Authentication → Configuration → SMTP**:
+
+| Field | Value |
+|-------|-------|
+| **Host** | `smtp.resend.com` |
+| **Port** | `465` |
+| **Username** | `resend` |
+| **Password** | your `RESEND_API_KEY` (starts with `re_…`) |
+| **Sender name** | `Pollix` |
+| **Sender email** | `noreply@pollix.it` (or your verified domain) |
+
+#### Customise email templates
+
+Ready-made HTML templates are in `supabase/templates/`. Paste them into the Supabase Dashboard → **Authentication → Email Templates**:
+
+| Template | File | Subject |
+|----------|------|---------|
+| Confirm signup | `supabase/templates/confirm-signup.html` | `Conferma la tua email – Pollix` |
+| Reset password | `supabase/templates/reset-password.html` | `Reimposta la tua password – Pollix` |
+
+The templates use `{{ .ConfirmationURL }}` and `{{ .SiteURL }}` as Supabase variables and are styled to match the Pollix Minecraft aesthetic.
 
 ### 4. Environment variables reference
 
@@ -312,7 +337,8 @@ pollix/
 │           ├── types/         # TypeScript interfaces (camelCase)
 │           └── schemas/       # Zod validation schemas
 └── supabase/
-    └── migrations/            # SQL migrations (run in order)
+    ├── migrations/            # SQL migrations (run in order)
+    └── templates/             # Custom HTML email templates (paste into Supabase Dashboard)
 ```
 
 ---
