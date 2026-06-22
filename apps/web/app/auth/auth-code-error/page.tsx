@@ -107,7 +107,7 @@ function AuthCodeErrorContent() {
                 <Button
                   variant="outline"
                   className="w-full mc-btn"
-                  onClick={() => router.push('/auth/login')}
+                  onClick={() => router.push('/login')}
                 >
                   {t('goToLogin')}
                 </Button>
