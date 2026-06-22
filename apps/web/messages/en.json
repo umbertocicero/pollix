@@ -288,6 +288,7 @@
       "title": "Create an account",
       "subtitle": "Get started with Pollix",
       "name": "Full Name",
+      "namePlaceholder": "Cow and Chicken",
       "email": "Email",
       "password": "Password",
       "confirmPassword": "Confirm Password",
