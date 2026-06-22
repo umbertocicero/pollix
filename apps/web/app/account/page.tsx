@@ -173,7 +173,7 @@ export default function AccountPage() {
           </div>
 
           {/* Profile / display name */}
-          <Card className="relative mb-6">
+          <Card className="mb-6">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <UserIcon className="h-5 w-5" />
@@ -231,7 +231,7 @@ export default function AccountPage() {
           </Card>
 
           {/* Danger zone */}
-          <Card className="border-destructive/50">
+          <Card className="relative border-destructive/50">
             <WalkingChicken />
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-destructive">

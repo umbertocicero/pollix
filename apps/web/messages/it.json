@@ -288,6 +288,7 @@
       "title": "Crea un account",
       "subtitle": "Inizia con Pollix",
       "name": "Nome Completo",
+      "namePlaceholder": "Mucca e Pollo",
       "email": "Email",
       "password": "Password",
       "confirmPassword": "Conferma Password",
