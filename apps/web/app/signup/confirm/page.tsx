@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
-import { Mail, ArrowLeft } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
@@ -23,9 +23,27 @@ export default function ConfirmEmailPage() {
           <div className="w-full max-w-md px-4">
             <Card className="overflow-hidden mc-panel">
               <CardContent className="p-8 text-center space-y-6">
-                {/* Email Icon */}
-                <div className="mx-auto w-20 h-20 bg-primary/10 flex items-center justify-center">
-                  <Mail className="h-10 w-10 text-primary" />
+                {/* Pixel-art envelope icon */}
+                <div className="mx-auto" style={{ width: 64, height: 64, imageRendering: 'pixelated' }}>
+                  <svg viewBox="0 0 16 16" width="64" height="64" style={{ imageRendering: 'pixelated', display: 'block' }}>
+                    {/* envelope body */}
+                    <rect x="1" y="3" width="14" height="10" fill="#5D8A3A"/>
+                    <rect x="1" y="3" width="14" height="1"  fill="#8BC34A"/>
+                    <rect x="1" y="3" width="1"  height="10" fill="#8BC34A"/>
+                    <rect x="1" y="12" width="14" height="1" fill="#2E5A1A"/>
+                    <rect x="14" y="3" width="1"  height="10" fill="#2E5A1A"/>
+                    {/* flap chevron (two diagonals) */}
+                    <rect x="1" y="4"  width="2" height="1" fill="#3A7A1E"/>
+                    <rect x="3" y="5"  width="2" height="1" fill="#3A7A1E"/>
+                    <rect x="5" y="6"  width="2" height="1" fill="#3A7A1E"/>
+                    <rect x="7" y="7"  width="2" height="1" fill="#3A7A1E"/>
+                    <rect x="9" y="6"  width="2" height="1" fill="#3A7A1E"/>
+                    <rect x="11" y="5" width="2" height="1" fill="#3A7A1E"/>
+                    <rect x="13" y="4" width="2" height="1" fill="#3A7A1E"/>
+                    {/* letter inside */}
+                    <rect x="4" y="9"  width="8" height="1" fill="#C8E6A0"/>
+                    <rect x="4" y="11" width="5" height="1" fill="#C8E6A0"/>
+                  </svg>
                 </div>
 
                 {/* Title */}
