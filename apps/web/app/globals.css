@@ -167,20 +167,11 @@
 
 /* ─────────────────────────────────────────────────────────────
    Walking chicken decoration (paces the top edge of a card).
-   Horizontal walk + facing flip are rAF (JS); legs are SMIL.
-   Tap/hover triggers a ~1s "startled" reaction.
+   Walk, facing flip, body bob and legs are ALL SVG SMIL (see
+   walking-chicken.tsx) so they keep running on iOS Safari even with
+   Reduce Motion / Low Power Mode. Only the tap "startled" reaction and
+   the idle head bob below are CSS.
    ───────────────────────────────────────────────────────────── */
-
-.mc-chicken-pos {
-  position: absolute;
-  left: 0;
-  width: 100%;
-  /* horizontal position driven by requestAnimationFrame in walking-chicken.tsx */
-}
-.mc-chicken-flip {
-  transform-origin: 50% 100%;
-  /* direction flip driven by requestAnimationFrame in walking-chicken.tsx */
-}
 
 /* feathers hidden during normal walking */
 .mc-chicken-feathers rect {
@@ -198,7 +189,7 @@
 .mc-chicken-wing-back   { transform-origin: 100% 50%; }
 
 /* ── startled reaction (≤ ~1s) ── */
-.mc-chicken-body.is-startled                       { animation: mc-hop 0.9s ease-out; }
+.is-startled .mc-chicken-body                      { animation: mc-hop 0.9s ease-out; }
 .is-startled .mc-chicken-head                      { animation: mc-neck 0.9s ease-out; }
 .is-startled .mc-chicken-wing-front                { animation: mc-wing-f 0.9s ease-out; }
 .is-startled .mc-chicken-wing-back                 { animation: mc-wing-b 0.9s ease-out; }
@@ -254,8 +245,8 @@
   100% { opacity: 0; transform: translate(4px, -24px) rotate(90deg); }
 }
 
-/* hover (or the startled moment) freezes the stroll; rAF loop is cancelled
-   from JS and SMIL legs are frozen via pauseAnimations(). */
+/* hover (or the startled moment) freezes the whole stroll: all SMIL motion
+   is frozen from JS via svg.pauseAnimations(). */
 
 /* idle "breathing": the head gently bobs and tilts so the bird looks alive
    even when standing still (on hover). Runs always; the startle neck-stretch
