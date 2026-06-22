@@ -337,6 +337,9 @@
       "invalidDescription": "Questo link di conferma non è valido.",
       "invalidHint": "Assicurati di aver copiato il link completo dall'email.",
       "resendEmail": "Reinvia email di conferma",
+      "emailSent": "Email inviata!",
+      "emailSentConfirm": "Controlla la tua casella — un nuovo link di conferma è in arrivo.",
+      "resendError": "Impossibile inviare l'email. Riprova o vai al login.",
       "goToLogin": "Vai al login",
       "goHome": "Vai alla home"
     },

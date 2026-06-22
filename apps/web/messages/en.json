@@ -337,6 +337,9 @@
       "invalidDescription": "This confirmation link is not valid.",
       "invalidHint": "Make sure you copied the full link from the email.",
       "resendEmail": "Resend confirmation email",
+      "emailSent": "Email sent!",
+      "emailSentConfirm": "Check your inbox — a new confirmation link is on its way.",
+      "resendError": "Could not send the email. Please try again or go to login.",
       "goToLogin": "Go to login",
       "goHome": "Go to home"
     },

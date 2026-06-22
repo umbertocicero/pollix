@@ -13,7 +13,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { createClient } from '@/lib/supabase/client';
 import { toast } from 'sonner';
 
 function AuthCodeErrorContent() {
@@ -32,20 +31,20 @@ function AuthCodeErrorContent() {
     if (!email) return;
     setSending(true);
     try {
-      const supabase = createClient();
-      const redirectBase = process.env.NEXT_PUBLIC_APP_URL || window.location.origin;
-      const { error } = await supabase.auth.resend({
-        type: 'signup',
-        email,
-        options: {
-          emailRedirectTo: `${redirectBase}/auth/callback`,
-        },
+      const res = await fetch('/api/auth/resend-confirmation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
       });
-      if (error) throw error;
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body?.error ?? 'send_failed');
+      }
       setSent(true);
-      toast.success('Email inviata!');
-    } catch {
-      toast.error('Errore nell\'invio. Riprova o vai al login.');
+      toast.success(t('emailSent'));
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : '';
+      toast.error(msg || t('resendError'));
     } finally {
       setSending(false);
     }
@@ -103,7 +102,7 @@ function AuthCodeErrorContent() {
 
               {sent && (
                 <p className="text-center text-sm text-muted-foreground py-2">
-                  ✓ Check your inbox — a new confirmation link is on its way.
+                  ✓ {t('emailSentConfirm')}
                 </p>
               )}
 
