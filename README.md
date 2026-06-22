@@ -458,6 +458,7 @@ Contributions are welcome!
 - [ ] Password-protected polls
 - [ ] Automatic poll expiry
 - [ ] Mobile UX improvements
+- [ ] Internazionalizzare Mail di registrazione
 
 ### v2.0 (Future) 🔮
 - [ ] AI: suggest best time slots using LLM
