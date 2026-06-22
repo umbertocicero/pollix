@@ -325,6 +325,17 @@
       "notReceived": "Non hai ricevuto l'email?",
       "notReceivedTip": "Se non hai ricevuto l'email di conferma durante la registrazione, puoi usare questa funzione per attivare il tuo account."
     },
+    "authCodeError": {
+      "expiredTitle": "Link scaduto",
+      "expiredDescription": "Questo link di conferma è già stato usato oppure è scaduto.",
+      "expiredHint": "Richiedine uno nuovo — ci vuole un secondo.",
+      "invalidTitle": "Link non valido",
+      "invalidDescription": "Questo link di conferma non è valido.",
+      "invalidHint": "Assicurati di aver copiato il link completo dall'email.",
+      "resendEmail": "Reinvia email di conferma",
+      "goToLogin": "Vai al login",
+      "goHome": "Vai alla home"
+    },
     "resetPassword": {
       "title": "Reimposta password",
       "subtitle": "Inserisci la tua nuova password",

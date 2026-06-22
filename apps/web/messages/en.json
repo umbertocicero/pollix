@@ -325,6 +325,17 @@
       "notReceived": "Didn't receive the email?",
       "notReceivedTip": "If you didn't receive the confirmation email during registration, you can use this feature to activate your account."
     },
+    "authCodeError": {
+      "expiredTitle": "Link expired",
+      "expiredDescription": "This confirmation link has already been used or has expired.",
+      "expiredHint": "Request a new one — it only takes a second.",
+      "invalidTitle": "Invalid link",
+      "invalidDescription": "This confirmation link is not valid.",
+      "invalidHint": "Make sure you copied the full link from the email.",
+      "resendEmail": "Resend confirmation email",
+      "goToLogin": "Go to login",
+      "goHome": "Go to home"
+    },
     "resetPassword": {
       "title": "Reset password",
       "subtitle": "Enter your new password",

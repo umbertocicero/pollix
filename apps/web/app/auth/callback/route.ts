@@ -51,8 +51,12 @@ export async function GET(request: Request) {
       const destination = type === 'recovery' ? '/auth/reset-password' : safeNext;
       return NextResponse.redirect(`${origin}${destination}`);
     }
+    // Expired or already-used code → show specific error
+    return NextResponse.redirect(
+      `${origin}/auth/auth-code-error?reason=expired`,
+    );
   }
 
-  // Return the user to an error page
-  return NextResponse.redirect(`${origin}/auth/auth-code-error`);
+  // No code in the URL at all
+  return NextResponse.redirect(`${origin}/auth/auth-code-error?reason=invalid`);
 }
