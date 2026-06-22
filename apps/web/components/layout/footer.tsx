@@ -25,18 +25,7 @@ export function Footer() {
           </Link>
 
           <nav className="flex flex-wrap items-center justify-center gap-6">
-            <Link
-              href="/polls/create"
-              className="font-pixel text-xs text-muted-foreground hover:text-foreground transition-colors duration-100"
-            >
-              {t('createPoll')}
-            </Link>
-            <Link
-              href="/#features"
-              className="font-pixel text-xs text-muted-foreground hover:text-foreground transition-colors duration-100"
-            >
-              {t('features')}
-            </Link>
+            
           </nav>
 
           <p className="font-pixel text-xs text-muted-foreground">
