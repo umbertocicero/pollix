@@ -7,6 +7,7 @@ import { Suspense } from 'react';
 import { AlertTriangle, Clock, Mail, ArrowLeft } from 'lucide-react';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
+import { McBackground } from '@/components/mc-background';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -46,7 +47,9 @@ function AuthCodeErrorContent() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <>
+      <McBackground className="fixed inset-0 z-0" />
+      <div className="relative z-10 min-h-screen flex flex-col">
       <Header />
       <main className="flex-1 flex items-center justify-center p-4">
         <div className="w-full max-w-md space-y-4">
@@ -126,6 +129,7 @@ function AuthCodeErrorContent() {
       </main>
       <Footer />
     </div>
+    </>
   );
 }
 
