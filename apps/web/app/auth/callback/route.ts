@@ -14,8 +14,10 @@ export async function GET(request: Request) {
   const next = searchParams.get('next') ?? '/dashboard';
   const safeNext = next.startsWith('/') ? next : '/dashboard';
 
+  // Supabase returns error params in the query string for expired/invalid links.
   if (errorCode || errorDescription) {
-    return NextResponse.redirect(`${origin}/login?error=auth_callback_failed`);
+    const reason = errorCode === 'otp_expired' ? 'expired' : 'invalid';
+    return NextResponse.redirect(`${origin}/auth/auth-code-error?reason=${reason}`);
   }
 
   const supabase = createClient();
@@ -25,6 +27,7 @@ export async function GET(request: Request) {
     if (!error) {
       return NextResponse.redirect(`${origin}${safeNext}`);
     }
+    return NextResponse.redirect(`${origin}/auth/auth-code-error?reason=invalid`);
   }
 
   if (tokenHash && type) {
@@ -37,6 +40,7 @@ export async function GET(request: Request) {
       const destination = type === 'recovery' ? '/auth/reset-password' : safeNext;
       return NextResponse.redirect(`${origin}${destination}`);
     }
+    return NextResponse.redirect(`${origin}/auth/auth-code-error?reason=expired`);
   }
 
   // Some email templates/providers may land here with token (not token_hash).
@@ -51,12 +55,9 @@ export async function GET(request: Request) {
       const destination = type === 'recovery' ? '/auth/reset-password' : safeNext;
       return NextResponse.redirect(`${origin}${destination}`);
     }
-    // Expired or already-used code → show specific error
-    return NextResponse.redirect(
-      `${origin}/auth/auth-code-error?reason=expired`,
-    );
+    return NextResponse.redirect(`${origin}/auth/auth-code-error?reason=expired`);
   }
 
-  // No code in the URL at all
+  // No recognisable params — link is malformed or already consumed.
   return NextResponse.redirect(`${origin}/auth/auth-code-error?reason=invalid`);
 }
