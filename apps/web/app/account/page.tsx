@@ -8,6 +8,7 @@ import { Loader2, User as UserIcon, Save, Trash2, AlertTriangle } from 'lucide-r
 import type { User } from '@supabase/supabase-js';
 
 import { createClient } from '@/lib/supabase/client';
+import { WalkingChicken } from '@/components/walking-chicken';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Button } from '@/components/ui/button';
@@ -172,7 +173,8 @@ export default function AccountPage() {
           </div>
 
           {/* Profile / display name */}
-          <Card className="mb-6">
+          <Card className="relative mb-6">
+            <WalkingChicken />
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <UserIcon className="h-5 w-5" />
