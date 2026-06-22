@@ -102,8 +102,8 @@ export function WalkingChicken({ duration = 30, size = 32, className = '' }: Pro
   return (
     <div
       aria-hidden
-      className={`mc-chicken-walker absolute bottom-full left-0 w-full z-10 ${paused ? 'is-paused' : ''} ${className}`}
-      style={{ height: size } as CSSProperties}
+      className={`mc-chicken-walker absolute left-0 w-full z-10 ${paused ? 'is-paused' : ''} ${className}`}
+      style={{ height: size, top: -size } as CSSProperties}
     >
       <div ref={posRef} className="mc-chicken-pos" style={{ height: size }}>
         <div ref={flipRef} className="mc-chicken-flip" style={{ height: size }}>
