@@ -78,7 +78,7 @@ interface VoteResult {
   optionId: string;
   voteCount: number;
   percentage: number;
-  voterNames: string[];
+  voterNames: (string | null)[];
 }
 
 interface UserVote {
@@ -137,7 +137,7 @@ export default function PollVotePage() {
   const [isEditing, setIsEditing] = useState(false);
   const [anonymousFingerprint, setAnonymousFingerprint] = useState<string>('');
   const [notAvailable, setNotAvailable] = useState(false);
-  const [notAvailableVoterNames, setNotAvailableVoterNames] = useState<string[]>([]);
+  const [notAvailableVoterNames, setNotAvailableVoterNames] = useState<(string | null)[]>([]);
   const [notAvailableCount, setNotAvailableCount] = useState(0);
   const [comment, setComment] = useState('');
   const [comments, setComments] = useState<VoteComment[]>([]);
@@ -185,8 +185,8 @@ export default function PollVotePage() {
     setTotalVotes(total);
 
     const voteCounts: Record<string, number> = {};
-    const votersByOption: Record<string, string[]> = {};
-    const unavailableNames: string[] = [];
+    const votersByOption: Record<string, (string | null)[]> = {};
+    const unavailableNames: (string | null)[] = [];
     let unavailableVotes = 0;
     const collectedComments: VoteComment[] = [];
     const seenComments = new Set<string>();
@@ -194,13 +194,13 @@ export default function PollVotePage() {
     votes.forEach((v: { option_id: string | null; voter_name: string | null; is_not_available: boolean | null; comment: string | null }) => {
       if (v.is_not_available) {
         unavailableVotes += 1;
-        if (v.voter_name) unavailableNames.push(v.voter_name);
+        unavailableNames.push(v.voter_name);
       }
 
       if (v.option_id) {
         voteCounts[v.option_id] = (voteCounts[v.option_id] || 0) + 1;
         if (!votersByOption[v.option_id]) votersByOption[v.option_id] = [];
-        if (v.voter_name) votersByOption[v.option_id].push(v.voter_name);
+        votersByOption[v.option_id].push(v.voter_name);
       }
 
       // Collect comments, de-duplicating multi-choice rows that share the same
@@ -1007,9 +1007,9 @@ export default function PollVotePage() {
                               {result.voterNames.map((name, idx) => (
                                 <span
                                   key={idx}
-                                  className="mc-raised inline-flex items-center bg-[#5D8A3A]/15 px-3 py-1 text-sm text-[#3A6E24] dark:text-[#3DCC4A]"
+                                  className={`mc-raised inline-flex items-center px-3 py-1 text-sm ${name ? 'bg-[#5D8A3A]/15 text-[#3A6E24] dark:text-[#3DCC4A]' : 'bg-muted text-muted-foreground italic'}`}
                                 >
-                                  {name}
+                                  {name ?? t('poll.results.anonymous')}
                                 </span>
                               ))}
                             </div>
@@ -1025,10 +1025,10 @@ export default function PollVotePage() {
                             <div className="flex flex-wrap gap-2">
                               {notAvailableVoterNames.map((name, idx) => (
                                 <span
-                                  key={`${name}-${idx}`}
+                                  key={`${name ?? 'anon'}-${idx}`}
                                   className="mc-raised inline-flex items-center bg-orange-500/20 px-3 py-1 text-sm text-orange-400"
                                 >
-                                  {name}
+                                  {name ?? t('poll.results.anonymous')}
                                 </span>
                               ))}
                             </div>
@@ -1139,9 +1139,9 @@ export default function PollVotePage() {
                               {result.voterNames.map((name, idx) => (
                                 <span
                                   key={idx}
-                                  className="mc-raised inline-flex items-center bg-[#5D8A3A]/15 px-3 py-1 text-sm text-[#3A6E24] dark:text-[#3DCC4A]"
+                                  className={`mc-raised inline-flex items-center px-3 py-1 text-sm ${name ? 'bg-[#5D8A3A]/15 text-[#3A6E24] dark:text-[#3DCC4A]' : 'bg-muted text-muted-foreground italic'}`}
                                 >
-                                  {name}
+                                  {name ?? t('poll.results.anonymous')}
                                 </span>
                               ))}
                             </div>
@@ -1157,10 +1157,10 @@ export default function PollVotePage() {
                             <div className="flex flex-wrap gap-2">
                               {notAvailableVoterNames.map((name, idx) => (
                                 <span
-                                  key={`${name}-${idx}`}
+                                  key={`${name ?? 'anon'}-${idx}`}
                                   className="mc-raised inline-flex items-center bg-orange-500/20 px-3 py-1 text-sm text-orange-400"
                                 >
-                                  {name}
+                                  {name ?? t('poll.results.anonymous')}
                                 </span>
                               ))}
                             </div>
