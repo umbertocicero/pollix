@@ -462,29 +462,31 @@ export function McBackground({ className = '' }: { className?: string }) {
         )}
 
         {/* ── Moon / Sun with pulsing glow ── */}
+        {/* Centred around x≈300, y≈62 so they clear the page header and
+            stay inside the visible x band on portrait mobile (≈164–316). */}
         {night ? (
           <g>
-            <rect x={372} y={16} width={40} height={40} fill="#F0E860" opacity={0.06}>
+            <rect x={280} y={42} width={40} height={40} fill="#F0E860" opacity={0.06}>
               <animate attributeName="opacity" values="0.04;0.1;0.04" dur="6s" repeatCount="indefinite" />
             </rect>
-            <rect x={378} y={22} width={28} height={28} fill="#F4ED7A" />
-            <rect x={384} y={28} width={8} height={8} fill="#D8D040" opacity={0.4} />
-            <rect x={396} y={38} width={6} height={6} fill="#D8D040" opacity={0.3} />
-            <rect x={386} y={42} width={4} height={4} fill="#C8C030" opacity={0.25} />
+            <rect x={286} y={48} width={28} height={28} fill="#F4ED7A" />
+            <rect x={292} y={54} width={8} height={8} fill="#D8D040" opacity={0.4} />
+            <rect x={304} y={64} width={6} height={6} fill="#D8D040" opacity={0.3} />
+            <rect x={294} y={68} width={4} height={4} fill="#C8C030" opacity={0.25} />
           </g>
         ) : (
           <g>
-            <rect x={366} y={10} width={52} height={52} fill="#FCEE4B" opacity={0.1}>
+            <rect x={274} y={36} width={52} height={52} fill="#FCEE4B" opacity={0.1}>
               <animate attributeName="opacity" values="0.07;0.16;0.07" dur="5s" repeatCount="indefinite" />
             </rect>
-            <rect x={378} y={22} width={28} height={28} fill="#FCEE4B" />
-            <rect x={382} y={26} width={8} height={8} fill="#FFF68F" opacity={0.5} />
+            <rect x={286} y={48} width={28} height={28} fill="#FCEE4B" />
+            <rect x={290} y={52} width={8} height={8} fill="#FFF68F" opacity={0.5} />
             {/* rays */}
             <g opacity={0.5}>
-              <rect x={388} y={12} width={8} height={6} fill="#FCEE4B" />
-              <rect x={388} y={54} width={8} height={6} fill="#FCEE4B" />
-              <rect x={366} y={32} width={6} height={8} fill="#FCEE4B" />
-              <rect x={412} y={32} width={6} height={8} fill="#FCEE4B" />
+              <rect x={296} y={38} width={8} height={6} fill="#FCEE4B" />
+              <rect x={296} y={80} width={8} height={6} fill="#FCEE4B" />
+              <rect x={274} y={58} width={6} height={8} fill="#FCEE4B" />
+              <rect x={320} y={58} width={6} height={8} fill="#FCEE4B" />
               <animate attributeName="opacity" values="0.3;0.7;0.3" dur="4s" repeatCount="indefinite" />
             </g>
           </g>
@@ -573,12 +575,12 @@ export function McBackground({ className = '' }: { className?: string }) {
         </g>
         {/* celestial reflection shimmering on the water */}
         {night ? (
-          <rect x={374} y={192} width={8} height={24} fill="url(#moonReflect)">
+          <rect x={296} y={192} width={8} height={24} fill="url(#moonReflect)">
             <animate attributeName="opacity" values="0.5;0.9;0.4;0.7" dur="4s" repeatCount="indefinite" />
             <animate attributeName="width" values="8;6;10;8" dur="5s" repeatCount="indefinite" />
           </rect>
         ) : (
-          <rect x={374} y={192} width={8} height={22} fill="#FFF6A0" opacity={0.3}>
+          <rect x={296} y={192} width={8} height={22} fill="#FFF6A0" opacity={0.3}>
             <animate attributeName="opacity" values="0.3;0.55;0.3" dur="4.5s" repeatCount="indefinite" />
           </rect>
         )}
